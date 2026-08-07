@@ -38,7 +38,7 @@ export async function syncLocalToSupabase() {
     if (remotePets && remotePets.length > 0) {
       for (const rPet of remotePets) {
         const existsLocally = localPets.some(
-          (lp) => lp.name.toLowerCase() === rPet.name.toLowerCase() && lp.ownerName.toLowerCase() === rPet.owner_name.toLowerCase()
+          (lp) => (lp.name || '').toLowerCase() === (rPet.name || '').toLowerCase() && (lp.ownerName || '').toLowerCase() === (rPet.owner_name || '').toLowerCase()
         );
         if (!existsLocally) {
           await db.pets.add({

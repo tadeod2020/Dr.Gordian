@@ -47,12 +47,11 @@ export const PetList: React.FC<PetListProps> = ({
   const filteredPets = pets.filter((pet) => {
     const matchesSpecies = speciesFilter === 'all' || pet.species === speciesFilter;
     const term = searchTerm.toLowerCase().trim();
-    const matchesSearch =
-      !term ||
-      pet.name.toLowerCase().includes(term) ||
-      pet.breed.toLowerCase().includes(term) ||
-      pet.ownerName.toLowerCase().includes(term) ||
-      (pet.chipNumber && pet.chipNumber.toLowerCase().includes(term));
+    const nameMatch = (pet.name || '').toLowerCase().includes(term);
+    const breedMatch = (pet.breed || '').toLowerCase().includes(term);
+    const ownerMatch = (pet.ownerName || '').toLowerCase().includes(term);
+    const chipMatch = pet.chipNumber ? (pet.chipNumber || '').toLowerCase().includes(term) : false;
+    const matchesSearch = !term || nameMatch || breedMatch || ownerMatch || chipMatch;
 
     return matchesSpecies && matchesSearch;
   });

@@ -36,7 +36,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const cats = pets.filter((p) => p.species === 'Gato');
 
   const pendingVaccines = vaccines.filter((v) => v.status === 'Próxima' || v.status === 'Vencida');
-  const recentPets = [...pets].sort((a, b) => new Date(b.registeredAt).getTime() - new Date(a.registeredAt).getTime()).slice(0, 5);
+  const recentPets = [...pets]
+    .sort((a, b) => {
+      const tA = a.registeredAt ? new Date(a.registeredAt).getTime() : 0;
+      const tB = b.registeredAt ? new Date(b.registeredAt).getTime() : 0;
+      return (isNaN(tB) ? 0 : tB) - (isNaN(tA) ? 0 : tA);
+    })
+    .slice(0, 5);
 
   const dogPercentage = totalPets > 0 ? Math.round((dogs.length / totalPets) * 100) : 0;
   const catPercentage = totalPets > 0 ? Math.round((cats.length / totalPets) * 100) : 0;

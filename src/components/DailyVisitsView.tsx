@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Pet, VisitRecord } from '../types/veterinary';
+import { AVATAR_PRESETS } from '../db/database';
 import { 
   Calendar, 
   Stethoscope, 
@@ -20,8 +21,8 @@ import {
 import { CameraModal } from './CameraModal';
 
 interface DailyVisitsViewProps {
-  pets: Pet[];
-  visits: VisitRecord[];
+  pets?: Pet[];
+  visits?: VisitRecord[];
   onSaveVisit: (visit: Omit<VisitRecord, 'id'>) => Promise<void>;
   onSavePetAndVisit: (
     petData: Omit<Pet, 'id' | 'registeredAt'>,
@@ -31,8 +32,8 @@ interface DailyVisitsViewProps {
 }
 
 export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
-  pets,
-  visits,
+  pets = [],
+  visits = [],
   onSaveVisit,
   onSavePetAndVisit,
   onSelectPet
@@ -68,27 +69,30 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
 
   const [saving, setSaving] = useState(false);
 
+  // Safe array references
+  const safePets = Array.isArray(pets) ? pets : [];
+  const safeVisits = Array.isArray(visits) ? visits : [];
+
   // Filter visits for selected date (defaults to Today)
-  const dayVisits = visits.filter((v) => v.date === selectedDate);
+  const dayVisits = safeVisits.filter((v) => v && v.date === selectedDate);
   const isTodaySelected = selectedDate === todayStr;
 
-  const totalCost = dayVisits.reduce((acc, v) => acc + (Number(v.cost) || 0), 0);
+  const totalCost = dayVisits.reduce((acc, v) => acc + (Number(v?.cost) || 0), 0);
 
-  // Match visits with pet data
+  // Match visits with pet data safely
   const visitsWithPets = dayVisits.map((v) => {
-    const pet = pets.find((p) => p.id === v.petId);
+    const pet = safePets.find((p) => p && p.id !== undefined && v?.petId !== undefined && Number(p.id) === Number(v.petId));
     return { visit: v, pet };
   });
 
   const filteredVisits = visitsWithPets.filter(({ visit, pet }) => {
     if (!searchTerm.trim()) return true;
     const term = searchTerm.toLowerCase().trim();
-    return (
-      visit.reason.toLowerCase().includes(term) ||
-      visit.diagnosis.toLowerCase().includes(term) ||
-      (pet && pet.name.toLowerCase().includes(term)) ||
-      (pet && pet.ownerName.toLowerCase().includes(term))
-    );
+    const reasonMatch = (visit?.reason || '').toLowerCase().includes(term);
+    const diagMatch = (visit?.diagnosis || '').toLowerCase().includes(term);
+    const petNameMatch = (pet?.name || '').toLowerCase().includes(term);
+    const ownerNameMatch = (pet?.ownerName || '').toLowerCase().includes(term);
+    return reasonMatch || diagMatch || petNameMatch || ownerNameMatch;
   });
 
   const dogsCount = visitsWithPets.filter(({ pet }) => pet?.species === 'Perro').length;
@@ -96,7 +100,8 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
 
   const handleOpenModal = () => {
     setPatientMode('existing');
-    setSelectedPetId(pets.length > 0 ? pets[0].id || '' : '');
+    const firstPet = safePets.find((p) => p && p.id !== undefined);
+    setSelectedPetId(firstPet && firstPet.id !== undefined ? firstPet.id : '');
     setNewPetName('');
     setNewPetSpecies('Perro');
     setNewPetBreed('');
@@ -114,6 +119,17 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
     setIsNewVisitModalOpen(true);
   };
 
+  const handleSwitchToExistingMode = () => {
+    setPatientMode('existing');
+    if (!selectedPetId && safePets.length > 0 && safePets[0]?.id !== undefined) {
+      setSelectedPetId(safePets[0].id);
+    }
+  };
+
+  const handleSwitchToNewMode = () => {
+    setPatientMode('new');
+  };
+
   const handleSubmitVisit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -126,7 +142,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
         }
         await onSaveVisit({
           petId: Number(selectedPetId),
-          date: selectedDate,
+          date: selectedDate || todayStr,
           reason: reason.trim() || 'Consulta General',
           diagnosis: diagnosis.trim() || 'Sin diagnóstico registrado',
           treatment: treatment.trim() || 'Ninguno',
@@ -143,6 +159,10 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
           return;
         }
 
+        const defaultAvatar = newPetSpecies === 'Perro'
+          ? (AVATAR_PRESETS?.dogs?.[0] || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=300&q=80')
+          : (AVATAR_PRESETS?.cats?.[0] || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=300&q=80');
+
         await onSavePetAndVisit(
           {
             name: newPetName.trim(),
@@ -152,12 +172,10 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
             weightKg: Number(newPetWeight) || undefined,
             ownerName: newPetOwnerName.trim(),
             ownerPhone: newPetOwnerPhone.trim(),
-            avatarUrl: newPetSpecies === 'Perro' 
-              ? 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=300&q=80' 
-              : 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=300&q=80'
+            avatarUrl: defaultAvatar
           },
           {
-            date: selectedDate,
+            date: selectedDate || todayStr,
             reason: reason.trim() || 'Consulta General',
             diagnosis: diagnosis.trim() || 'Sin diagnóstico registrado',
             treatment: treatment.trim() || 'Ninguno',
@@ -171,18 +189,36 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
 
       setIsNewVisitModalOpen(false);
     } catch (err) {
-      console.error(err);
+      console.error('Error saving visit or pet:', err);
+      alert('Ocurrió un error al guardar la consulta. Por favor reintenta.');
     } finally {
       setSaving(false);
     }
   };
 
-  const formattedDateString = new Date(selectedDate + 'T00:00:00').toLocaleDateString('es-MX', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  const getFormattedDate = (dateStr: string) => {
+    try {
+      if (!dateStr) return '';
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return dateStr;
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parseInt(parts[2], 10);
+      if (isNaN(year) || isNaN(month) || isNaN(day)) return dateStr;
+      const d = new Date(year, month - 1, day);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('es-MX', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const formattedDateString = getFormattedDate(selectedDate);
 
   return (
     <div className="space-y-8 animate-slide-up">
@@ -216,6 +252,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
               />
               {!isTodaySelected && (
                 <button
+                  type="button"
                   onClick={() => setSelectedDate(todayStr)}
                   className="px-2.5 py-1 rounded-xl bg-white text-blue-800 text-[10px] font-extrabold hover:bg-blue-50 transition-colors"
                 >
@@ -225,6 +262,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
             </div>
 
             <button
+              type="button"
               onClick={handleOpenModal}
               className="px-5 py-3 rounded-2xl bg-white text-blue-800 font-extrabold text-xs shadow-md hover:bg-blue-50 transition-all flex items-center justify-center gap-2 transform hover:scale-105 active:scale-98"
             >
@@ -338,6 +376,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
               Haz clic en "Registrar Consulta de Hoy" para ingresar la primera atención del día.
             </p>
             <button
+              type="button"
               onClick={handleOpenModal}
               className="px-5 py-2.5 rounded-2xl bg-blue-600 text-white font-bold text-xs shadow-md hover:bg-blue-700 transition-all inline-flex items-center gap-2"
             >
@@ -435,6 +474,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
 
                   {pet && (
                     <button
+                      type="button"
                       onClick={() => onSelectPet(pet)}
                       className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-xs flex items-center gap-1"
                     >
@@ -473,6 +513,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
               </div>
 
               <button
+                type="button"
                 onClick={() => setIsNewVisitModalOpen(false)}
                 className="p-2 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
@@ -491,7 +532,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
                 <div className="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl">
                   <button
                     type="button"
-                    onClick={() => setPatientMode('existing')}
+                    onClick={handleSwitchToExistingMode}
                     className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                       patientMode === 'existing'
                         ? 'bg-blue-600 text-white shadow-md'
@@ -504,7 +545,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => setPatientMode('new')}
+                    onClick={handleSwitchToNewMode}
                     className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                       patientMode === 'new'
                         ? 'bg-emerald-600 text-white shadow-md'
@@ -519,13 +560,15 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
 
               {/* PATIENT SELECTOR OR INLINE PET REGISTRATION */}
               {patientMode === 'existing' ? (
-                <div>
+                <div key="patient-mode-existing" className="notranslate" translate="no">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     Seleccionar Mascota Registrada *
                   </label>
-                  {pets.length === 0 ? (
+                  {safePets.length === 0 ? (
                     <div className="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 text-amber-800 dark:text-amber-300 text-xs font-semibold">
-                      No hay mascotas registradas aún. Selecciona <strong>+ Registrar Mascota Nueva</strong> arriba.
+                      <span>No hay mascotas registradas aún. Selecciona </span>
+                      <strong>+ Registrar Mascota Nueva</strong>
+                      <span> arriba.</span>
                     </div>
                   ) : (
                     <select
@@ -534,7 +577,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
                       required
                       className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-blue-600 text-sm font-bold text-slate-900 dark:text-white"
                     >
-                      {pets.map((p) => (
+                      {safePets.map((p) => (
                         <option key={p.id} value={p.id}>
                           {p.name} ({p.species} - {p.breed}) • Dueño: {p.ownerName}
                         </option>
@@ -544,7 +587,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
                 </div>
               ) : (
                 /* INLINE NEW PET REGISTRATION FORM */
-                <div className="p-4 rounded-3xl bg-emerald-50/70 dark:bg-slate-800/80 border border-emerald-200 dark:border-slate-700 space-y-4">
+                <div key="patient-mode-new" className="p-4 rounded-3xl bg-emerald-50/70 dark:bg-slate-800/80 border border-emerald-200 dark:border-slate-700 space-y-4 notranslate" translate="no">
                   <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300">
                     <Sparkles className="w-4 h-4" />
                     <h4 className="font-extrabold text-xs uppercase tracking-wider">
