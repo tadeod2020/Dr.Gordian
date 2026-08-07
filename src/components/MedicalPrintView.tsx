@@ -161,7 +161,16 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
                     <td className="p-2 border-r border-slate-200">{v.date}</td>
                     <td className="p-2 border-r border-slate-200 font-semibold">{v.reason}</td>
                     <td className="p-2 border-r border-slate-200">{v.diagnosis}</td>
-                    <td className="p-2 border-r border-slate-200">{v.treatment}</td>
+                    <td className="p-2 border-r border-slate-200">
+                      {v.treatment}
+                      {v.images && v.images.length > 0 && (
+                        <div className="flex gap-1.5 mt-2">
+                          {v.images.map((img, i) => (
+                            <img key={i} src={img} alt="Evidencia" className="w-12 h-12 rounded object-cover border border-slate-300" />
+                          ))}
+                        </div>
+                      )}
+                    </td>
                     <td className="p-2">{v.vetName}</td>
                   </tr>
                 ))

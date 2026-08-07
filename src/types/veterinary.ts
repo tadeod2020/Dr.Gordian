@@ -31,6 +31,7 @@ export interface VisitRecord {
   weightKg: number;
   cost: number;
   nextAppointmentDate?: string;
+  images?: string[];
 }
 
 export interface VaccineRecord {

@@ -14,7 +14,8 @@ import {
   Edit3, 
   Scale, 
   Calendar,
-  Sparkles
+  Sparkles,
+  Camera
 } from 'lucide-react';
 
 interface PetDetailModalProps {
@@ -242,6 +243,29 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
                           <p className="text-slate-800 dark:text-slate-200 font-medium mt-0.5">{visit.treatment}</p>
                         </div>
                       </div>
+
+                      {/* Visit attached images if any */}
+                      {visit.images && visit.images.length > 0 && (
+                        <div className="pt-2 border-t border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+                          <p className="font-bold text-slate-400 uppercase text-[10px] flex items-center gap-1">
+                            <Camera className="w-3 h-3 text-blue-500" />
+                            <span>Fotos & Evidencias ({visit.images.length})</span>
+                          </p>
+                          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                            {visit.images.map((img, idx) => (
+                              <a
+                                key={idx}
+                                href={img}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="relative w-20 h-20 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 flex-shrink-0 group hover:ring-2 hover:ring-blue-500 transition-all"
+                              >
+                                <img src={img} alt={`Evidencia ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
