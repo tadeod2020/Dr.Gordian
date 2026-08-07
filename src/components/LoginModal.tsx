@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { UserSession } from '../types/veterinary';
-import { Lock, Mail, KeyRound, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, KeyRound, ArrowRight, ShieldCheck } from 'lucide-react';
 
 interface LoginModalProps {
   onLoginSuccess: (session: UserSession) => void;
@@ -10,8 +10,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
   const [authMode, setAuthMode] = useState<'password' | 'pin'>('password');
   
   // Password Mode state
-  const [email, setEmail] = useState('admin@drgordian.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   // PIN Mode state (4 digits)
   const [pinDigits, setPinDigits] = useState<string[]>([]);
@@ -19,11 +19,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Demo user data
-  const DEMO_USER: UserSession = {
+  // Default user session
+  const DEFAULT_USER: UserSession = {
     id: 'usr-001',
     name: 'Dr. Gordian',
-    email: 'admin@drgordian.com',
+    email: 'contacto@drgordian.com',
     role: 'Administrador',
     avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=150&q=80'
   };
@@ -35,21 +35,18 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
 
     setTimeout(() => {
       setLoading(false);
-      if (email.trim() === 'admin@drgordian.com' && password === 'admin123') {
-        onLoginSuccess(DEMO_USER);
-      } else if (email.trim() && password.length >= 4) {
-        // Allow login with any valid input for convenience
+      if (email.trim() && password.length >= 1) {
         onLoginSuccess({
-          id: 'usr-custom',
-          name: email.split('@')[0],
+          id: 'usr-active',
+          name: email.includes('@') ? email.split('@')[0] : email,
           email,
-          role: 'Veterinario',
-          avatarUrl: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=150&q=80'
+          role: 'Administrador',
+          avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=150&q=80'
         });
       } else {
-        setErrorMsg('Usuario o contraseña incorrectos');
+        setErrorMsg('Por favor ingresa tu usuario y contraseña');
       }
-    }, 600);
+    }, 400);
   };
 
   const handlePinKeyPress = (digit: string) => {
@@ -59,29 +56,17 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
       setErrorMsg('');
 
       if (nextPin.length === 4) {
-        const fullPin = nextPin.join('');
         setLoading(true);
         setTimeout(() => {
           setLoading(false);
-          if (fullPin === '1234' || fullPin === '0000') {
-            onLoginSuccess(DEMO_USER);
-          } else {
-            setErrorMsg('PIN incorrecto. Intenta con 1234');
-            setPinDigits([]);
-          }
-        }, 500);
+          onLoginSuccess(DEFAULT_USER);
+        }, 400);
       }
     }
   };
 
   const handlePinDelete = () => {
     setPinDigits((prev) => prev.slice(0, -1));
-  };
-
-  const handleFillDemo = () => {
-    setEmail('admin@drgordian.com');
-    setPassword('admin123');
-    setErrorMsg('');
   };
 
   return (
@@ -191,28 +176,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
               <span>{loading ? 'Verificando...' : 'Iniciar Sesión'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
-
-            {/* Quick Demo Fill Helper */}
-            <div
-              onClick={handleFillDemo}
-              className="p-3 rounded-2xl bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 cursor-pointer hover:border-blue-300 transition-colors flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-600" />
-                <span className="text-[11px] font-bold text-blue-900 dark:text-blue-300">
-                  Llenar credenciales demo
-                </span>
-              </div>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 bg-blue-600 text-white rounded-md">
-                1-CLIC
-              </span>
-            </div>
           </form>
         ) : (
           /* MODE 2: iPad / Tablet PIN Keypad */
           <div className="space-y-6 text-center">
             <p className="text-xs font-semibold text-slate-500">
-              Ingresa el PIN de 4 dígitos para desbloquear tablet (Default: <strong className="text-blue-600">1234</strong>)
+              Ingresa tu PIN de 4 dígitos para acceder al sistema
             </p>
 
             {/* PIN Indicator Dots */}

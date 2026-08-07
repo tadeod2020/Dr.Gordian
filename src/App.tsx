@@ -20,15 +20,8 @@ export function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [darkMode, setDarkMode] = useState(false);
 
-  // Authentication & Session state
-  const [userSession, setUserSession] = useState<UserSession | null>(() => {
-    const saved = localStorage.getItem('dr_gordian_session');
-    if (saved) {
-      try { return JSON.parse(saved); } catch { return null; }
-    }
-    return null;
-  });
-
+  // Authentication & Session state (Always starts null on page reload)
+  const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [isLocked, setIsLocked] = useState(false);
 
   // Modals state
@@ -99,13 +92,11 @@ export function App() {
   const handleLoginSuccess = (session: UserSession) => {
     setUserSession(session);
     setIsLocked(false);
-    localStorage.setItem('dr_gordian_session', JSON.stringify(session));
   };
 
   const handleLogout = () => {
     setUserSession(null);
     setIsLocked(false);
-    localStorage.removeItem('dr_gordian_session');
   };
 
   const handleLockSession = () => {
