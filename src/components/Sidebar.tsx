@@ -8,7 +8,6 @@ import {
   ShieldCheck, 
   Menu, 
   X,
-  Stethoscope,
   Settings
 } from 'lucide-react';
 
@@ -52,15 +51,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile / Tablet Toggle Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 px-4 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20 text-white">
-            <Stethoscope className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="font-bold text-base tracking-tight leading-none text-slate-900 dark:text-white truncate max-w-[180px]">
-              {clinicSettings.name}
-            </h1>
-            <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-0.5">Clínica Veterinaria</p>
-          </div>
+          <img src="/logo-transparent.png" alt="Dr. Gordian" className="h-9 w-auto object-contain dark:hidden" />
+          <img src="/logo-transparent-white.png" alt="Dr. Gordian" className="h-9 w-auto object-contain hidden dark:block" />
         </div>
 
         <button
@@ -90,23 +82,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div 
             onClick={onOpenCloudSettings}
             className="flex items-center gap-3 px-2 py-1 cursor-pointer group hover:bg-blue-50/50 dark:hover:bg-slate-800/60 rounded-2xl transition-colors"
-            title="Haz clic para personalizar el nombre de la clínica"
+            title={`Personalizar ajustes de ${clinicSettings.name}`}
           >
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-500 flex items-center justify-center shadow-md shadow-blue-500/20 text-white flex-shrink-0">
-              <Stethoscope className="w-6 h-6" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white truncate">
-                  {clinicSettings.name}
-                </span>
-                <span className="px-1.5 py-0.5 text-[10px] font-bold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-md flex-shrink-0">
-                  VET
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
-                {clinicSettings.subtitle}
-              </p>
+            <div className="py-1">
+              <img src="/logo-transparent.png" alt="Dr. Gordian" className="h-10 w-auto object-contain dark:hidden" />
+              <img src="/logo-transparent-white.png" alt="Dr. Gordian" className="h-10 w-auto object-contain hidden dark:block" />
             </div>
           </div>
 

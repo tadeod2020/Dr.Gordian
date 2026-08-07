@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { UserSession } from '../types/veterinary';
-import { Stethoscope, Lock, Mail, KeyRound, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, KeyRound, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 
 interface LoginModalProps {
   onLoginSuccess: (session: UserSession) => void;
@@ -95,17 +95,13 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
         
         {/* Brand Header */}
         <div className="text-center space-y-3">
-          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-blue-600 to-sky-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-blue-500/25 transform hover:scale-105 transition-transform">
-            <Stethoscope className="w-9 h-9" />
+          <div className="flex justify-center py-2">
+            <img src="/logo-transparent.png" alt="Dr. Gordian" className="h-14 w-auto object-contain dark:hidden" />
+            <img src="/logo-transparent-white.png" alt="Dr. Gordian" className="h-14 w-auto object-contain hidden dark:block" />
           </div>
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Dr. Gordian VET
-            </h1>
-            <p className="text-xs text-blue-600 dark:text-blue-400 font-bold mt-0.5">
-              Acceso al Sistema Clínico Veterinario
-            </p>
-          </div>
+          <p className="text-xs text-blue-600 dark:text-blue-400 font-bold">
+            Acceso al Sistema Clínico Veterinario
+          </p>
         </div>
 
         {/* Mode Selector Toggle (Password vs PIN) */}

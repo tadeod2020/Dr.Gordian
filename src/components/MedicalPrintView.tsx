@@ -52,14 +52,17 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
       <div className="max-w-4xl mx-auto bg-white text-slate-900 p-8 border border-slate-300 rounded-lg shadow-sm print:border-none print:shadow-none print:p-0">
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-blue-600 pb-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-black text-blue-900 tracking-tight uppercase">
-              {clinicSettings.name}
-            </h1>
-            <p className="text-xs text-slate-600 font-semibold mt-0.5">
-              {clinicSettings.subtitle} • Tel: {clinicSettings.phone}
-            </p>
-            <p className="text-[11px] text-slate-500 font-medium">{clinicSettings.address}</p>
+          <div className="flex items-center gap-4">
+            <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-12 w-auto object-contain" />
+            <div>
+              <h1 className="text-xl font-black text-blue-900 tracking-tight uppercase">
+                {clinicSettings.name}
+              </h1>
+              <p className="text-xs text-slate-600 font-semibold mt-0.5">
+                {clinicSettings.subtitle} • Tel: {clinicSettings.phone}
+              </p>
+              <p className="text-[11px] text-slate-500 font-medium">{clinicSettings.address}</p>
+            </div>
           </div>
           <div className="text-right text-xs text-slate-500">
             <p className="font-bold text-slate-800">Fecha de Expedición</p>
