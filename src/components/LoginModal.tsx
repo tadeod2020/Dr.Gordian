@@ -10,9 +10,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
   // =========================================================
   // DEFINIR AQUÍ EL CORREO, CONTRASEÑA Y PIN DEL DOCTOR:
   // =========================================================
-  const DOCTOR_EMAIL = "admin@drgordian.com"; // <--- CAMBIA AQUÍ TU CORREO DE ACCESO
-  const DOCTOR_PASSWORD = "admin";           // <--- CAMBIA AQUÍ TU CONTRASEÑA DE ACCESO
-  const DOCTOR_PIN = "1234";                // <--- CAMBIA AQUÍ TU PIN DE 4 DÍGITOS
+  const DOCTOR_EMAIL = "gordianmanuel1963@gmail.com"; // <--- CAMBIA AQUÍ TU CORREO DE ACCESO
+  const DOCTOR_PASSWORD = "dr.gordian0509";           // <--- CAMBIA AQUÍ TU CONTRASEÑA DE ACCESO
+  const DOCTOR_PIN = "0509";                // <--- CAMBIA AQUÍ TU PIN DE 4 DÍGITOS
   // =========================================================
 
   const [authMode, setAuthMode] = useState<'password' | 'pin'>('password');
