@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { CloudConfig, ClinicSettings } from '../types/veterinary';
+import { supabase } from '../lib/supabase';
 import { 
   X, 
   Cloud, 
@@ -7,6 +8,7 @@ import {
   Download, 
   Upload, 
   CheckCircle2, 
+  AlertCircle,
   Server, 
   Laptop, 
   Tablet,
@@ -78,9 +80,20 @@ export const CloudSyncSettings: React.FC<CloudSyncSettingsProps> = ({
   const handleTestConnection = async () => {
     setTesting(true);
     setTestSuccess(null);
-    await new Promise((res) => setTimeout(res, 800));
-    setTesting(false);
-    setTestSuccess(true);
+    try {
+      const { error } = await supabase.from('pets').select('id').limit(1);
+      setTesting(false);
+      if (!error) {
+        setTestSuccess(true);
+      } else {
+        console.error('Connection test error:', error);
+        setTestSuccess(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setTesting(false);
+      setTestSuccess(false);
+    }
   };
 
   const handleSave = async () => {
@@ -420,6 +433,12 @@ export const CloudSyncSettings: React.FC<CloudSyncSettingsProps> = ({
                       <span className="text-xs text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center gap-1">
                         <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                         <span>Conexión activa y funcionando</span>
+                      </span>
+                    )}
+                    {testSuccess === false && (
+                      <span className="text-xs text-rose-600 dark:text-rose-400 font-extrabold flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4 text-rose-500" />
+                        <span>Error al conectar con la Nube</span>
                       </span>
                     )}
                   </div>
