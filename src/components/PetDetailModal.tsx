@@ -89,13 +89,13 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
               </div>
 
               <p className="text-sm text-blue-100 font-semibold">
-                {pet.breed} • {pet.gender} • {pet.ageYears} años {pet.ageMonths} meses
+                {pet.breed} • {pet.gender}{pet.ageYears !== undefined || pet.ageMonths !== undefined ? ` • ${pet.ageYears ?? 0} años ${pet.ageMonths ?? 0} meses` : ''}
               </p>
 
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1 text-xs text-blue-100 font-medium">
                 <span className="flex items-center gap-1 bg-white/15 px-3 py-1 rounded-full backdrop-blur-sm">
                   <Scale className="w-3.5 h-3.5" />
-                  <span>{pet.weightKg} kg</span>
+                  <span>{pet.weightKg !== undefined && pet.weightKg > 0 ? `${pet.weightKg} kg` : 'Sin peso'}</span>
                 </span>
                 <span className="flex items-center gap-1 bg-white/15 px-3 py-1 rounded-full backdrop-blur-sm">
                   <Sparkles className="w-3.5 h-3.5" />

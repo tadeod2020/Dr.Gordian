@@ -7,9 +7,9 @@ export interface Pet {
   species: PetSpecies;
   breed: string;
   gender: PetGender;
-  ageYears: number;
-  ageMonths: number;
-  weightKg: number;
+  ageYears?: number;
+  ageMonths?: number;
+  weightKg?: number;
   chipNumber?: string;
   avatarUrl: string;
   ownerName: string;

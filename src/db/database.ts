@@ -40,7 +40,7 @@ export const AVATAR_PRESETS = {
   ]
 };
 
-// Seed initial data if DB is empty
+// Seed initial configuration if DB is empty and clear old sample data
 export async function seedDatabase() {
   const clinicCount = await db.clinicSettings.count();
   if (clinicCount === 0) {
@@ -54,181 +54,8 @@ export async function seedDatabase() {
     });
   }
 
-  const petCount = await db.pets.count();
-  if (petCount === 0) {
-    const pet1Id = await db.pets.add({
-      name: 'Max',
-      species: 'Perro',
-      breed: 'Golden Retriever',
-      gender: 'Macho',
-      ageYears: 3,
-      ageMonths: 2,
-      weightKg: 28.5,
-      chipNumber: 'CHIP-9842103',
-      avatarUrl: AVATAR_PRESETS.dogs[1],
-      ownerName: 'Carlos Mendoza',
-      ownerPhone: '+52 55 1234 5678',
-      ownerEmail: 'carlos.mendoza@email.com',
-      ownerAddress: 'Av. Las Palmas 402, Ciudad',
-      registeredAt: new Date(Date.now() - 60 * 86400000).toISOString(),
-      notes: 'Muy amigable. Alérgico al pollo.'
-    });
-
-    const pet2Id = await db.pets.add({
-      name: 'Luna',
-      species: 'Gato',
-      breed: 'Siamés',
-      gender: 'Hembra',
-      ageYears: 2,
-      ageMonths: 5,
-      weightKg: 4.2,
-      chipNumber: 'CHIP-4410923',
-      avatarUrl: AVATAR_PRESETS.cats[0],
-      ownerName: 'Sofía Ramirez',
-      ownerPhone: '+52 55 9876 5432',
-      ownerEmail: 'sofia.ramirez@email.com',
-      ownerAddress: 'Calle Roble 12, Ciudad',
-      registeredAt: new Date(Date.now() - 40 * 86400000).toISOString(),
-      notes: 'Tímida en revisión física.'
-    });
-
-    const pet3Id = await db.pets.add({
-      name: 'Rocky',
-      species: 'Perro',
-      breed: 'Bulldog Francés',
-      gender: 'Macho',
-      ageYears: 1,
-      ageMonths: 8,
-      weightKg: 11.4,
-      chipNumber: 'CHIP-7731049',
-      avatarUrl: AVATAR_PRESETS.dogs[3],
-      ownerName: 'Alejandro Gomez',
-      ownerPhone: '+52 55 4567 8901',
-      ownerEmail: 'alessandro@email.com',
-      ownerAddress: 'Colonia Del Valle 89',
-      registeredAt: new Date(Date.now() - 15 * 86400000).toISOString(),
-      notes: 'Requiere revisión respiratoria periódica.'
-    });
-
-    const pet5Id = await db.pets.add({
-      name: 'Thor',
-      species: 'Perro',
-      breed: 'Pastor Alemán',
-      gender: 'Macho',
-      ageYears: 2,
-      ageMonths: 4,
-      weightKg: 32.8,
-      chipNumber: 'CHIP-9988110',
-      avatarUrl: AVATAR_PRESETS.dogs[0],
-      ownerName: 'Elena Rostova',
-      ownerPhone: '+52 55 9988 7766',
-      ownerEmail: 'elena.rostova@email.com',
-      ownerAddress: 'Av. Insurgentes Sur 1200',
-      registeredAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-      notes: 'Dermatitis leve controlada. Vacunación completa.'
-    });
-
-    await db.pets.add({
-      name: 'Mimi',
-      species: 'Gato',
-      breed: 'Persa',
-      gender: 'Hembra',
-      ageYears: 4,
-      ageMonths: 0,
-      weightKg: 3.8,
-      chipNumber: 'CHIP-3391820',
-      avatarUrl: AVATAR_PRESETS.cats[2],
-      ownerName: 'Laura Torres',
-      ownerPhone: '+52 55 2233 4455',
-      ownerEmail: 'laura.torres@email.com',
-      ownerAddress: 'Paseo de la Reforma 500',
-      registeredAt: new Date(Date.now() - 5 * 86400000).toISOString(),
-      notes: 'Cepillado de pelo continuo recomendado.'
-    });
-
-    // Seed visits
-    await db.visits.bulkAdd([
-      {
-        petId: pet1Id as number,
-        date: new Date(Date.now() - 10 * 86400000).toISOString().split('T')[0],
-        reason: 'Chequeo General',
-        diagnosis: 'Paciente saludable, excelente condición física.',
-        treatment: 'Continuar con dieta equilibrada y ejercicio diario.',
-        vetName: 'Dr. Gordian',
-        weightKg: 28.5,
-        cost: 450
-      },
-      {
-        petId: pet2Id as number,
-        date: new Date(Date.now() - 25 * 86400000).toISOString().split('T')[0],
-        reason: 'Vacunación Anual',
-        diagnosis: 'Aplicación de refuerzo Triple Felina.',
-        treatment: 'Reposo relativo por 24 horas.',
-        vetName: 'Dr. Gordian',
-        weightKg: 4.2,
-        cost: 380
-      },
-      {
-        petId: pet5Id as number,
-        date: new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0],
-        reason: 'Revisión Dermatológica & Desparasitación',
-        diagnosis: 'Dermatitis alérgica leve por picadura de pulga.',
-        treatment: 'Champú antiséptico c/3 días y Apoquel 16mg. Tratamiento antiparasitario Simparica Trio.',
-        vetName: 'Dr. Gordian',
-        weightKg: 32.8,
-        cost: 650
-      }
-    ]);
-
-    // Seed vaccines
-    const today = new Date();
-    const nextMonth = new Date(today.getTime() + 30 * 86400000).toISOString().split('T')[0];
-    const pastMonth = new Date(today.getTime() - 15 * 86400000).toISOString().split('T')[0];
-
-    await db.vaccines.bulkAdd([
-      {
-        petId: pet1Id as number,
-        vaccineName: 'Rabia',
-        appliedDate: pastMonth,
-        nextDueDate: new Date(today.getTime() + 350 * 86400000).toISOString().split('T')[0],
-        batchNumber: 'LOTE-RB889',
-        status: 'Al día'
-      },
-      {
-        petId: pet5Id as number,
-        vaccineName: 'Rabia & Séctuple Canina',
-        appliedDate: new Date(today.getTime() - 2 * 86400000).toISOString().split('T')[0],
-        nextDueDate: new Date(today.getTime() + 363 * 86400000).toISOString().split('T')[0],
-        batchNumber: 'LOTE-SC2026-X',
-        status: 'Al día'
-      },
-      {
-        petId: pet1Id as number,
-        vaccineName: 'Séctuple Canina',
-        appliedDate: pastMonth,
-        nextDueDate: nextMonth,
-        batchNumber: 'LOTE-SC102',
-        status: 'Próxima'
-      },
-      {
-        petId: pet2Id as number,
-        vaccineName: 'Triple Felina',
-        appliedDate: pastMonth,
-        nextDueDate: new Date(today.getTime() + 330 * 86400000).toISOString().split('T')[0],
-        batchNumber: 'LOTE-TF501',
-        status: 'Al día'
-      },
-      {
-        petId: pet3Id as number,
-        vaccineName: 'Parvovirus',
-        appliedDate: new Date(today.getTime() - 380 * 86400000).toISOString().split('T')[0],
-        nextDueDate: new Date(today.getTime() - 15 * 86400000).toISOString().split('T')[0],
-        batchNumber: 'LOTE-PV220',
-        status: 'Vencida'
-      }
-    ]);
-
-    // Seed cloud config default (Live Supabase Connected)
+  const cloudCount = await db.cloudConfig.count();
+  if (cloudCount === 0) {
     await db.cloudConfig.add({
       enabled: true,
       provider: 'supabase',
@@ -238,4 +65,13 @@ export async function seedDatabase() {
       autoSync: true
     });
   }
+
+  // Clear existing sample pets once when requested
+  if (!localStorage.getItem('dr_gordian_all_patients_cleared_v2')) {
+    await db.pets.clear();
+    await db.visits.clear();
+    await db.vaccines.clear();
+    localStorage.setItem('dr_gordian_all_patients_cleared_v2', 'true');
+  }
 }
+

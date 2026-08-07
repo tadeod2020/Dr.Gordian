@@ -284,10 +284,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
                     <div className="text-right">
                       <p className="text-xs font-bold text-slate-900 dark:text-white">
-                        {pet.weightKg} kg
+                        {pet.weightKg !== undefined && pet.weightKg > 0 ? `${pet.weightKg} kg` : '-'}
                       </p>
                       <p className="text-[11px] text-slate-400 font-medium">
-                        {pet.ageYears}a {pet.ageMonths}m
+                        {pet.ageYears !== undefined || pet.ageMonths !== undefined ? `${pet.ageYears ?? 0}a ${pet.ageMonths ?? 0}m` : '-'}
                       </p>
                     </div>
                   </div>

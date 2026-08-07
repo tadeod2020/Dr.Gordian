@@ -23,9 +23,9 @@ export const PetModal: React.FC<PetModalProps> = ({
   const [species, setSpecies] = useState<PetSpecies>(defaultSpecies);
   const [breed, setBreed] = useState('');
   const [gender, setGender] = useState<PetGender>('Macho');
-  const [ageYears, setAgeYears] = useState(1);
-  const [ageMonths, setAgeMonths] = useState(0);
-  const [weightKg, setWeightKg] = useState(5.0);
+  const [ageYears, setAgeYears] = useState<string | number>('');
+  const [ageMonths, setAgeMonths] = useState<string | number>('');
+  const [weightKg, setWeightKg] = useState<string | number>('');
   const [chipNumber, setChipNumber] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [ownerName, setOwnerName] = useState('');
@@ -42,9 +42,9 @@ export const PetModal: React.FC<PetModalProps> = ({
       setSpecies(editingPet.species);
       setBreed(editingPet.breed);
       setGender(editingPet.gender);
-      setAgeYears(editingPet.ageYears);
-      setAgeMonths(editingPet.ageMonths);
-      setWeightKg(editingPet.weightKg);
+      setAgeYears(editingPet.ageYears !== undefined ? editingPet.ageYears : '');
+      setAgeMonths(editingPet.ageMonths !== undefined ? editingPet.ageMonths : '');
+      setWeightKg(editingPet.weightKg !== undefined ? editingPet.weightKg : '');
       setChipNumber(editingPet.chipNumber || '');
       setAvatarUrl(editingPet.avatarUrl);
       setOwnerName(editingPet.ownerName);
@@ -57,9 +57,9 @@ export const PetModal: React.FC<PetModalProps> = ({
       setSpecies(defaultSpecies);
       setBreed('');
       setGender('Macho');
-      setAgeYears(1);
-      setAgeMonths(0);
-      setWeightKg(defaultSpecies === 'Perro' ? 12.0 : 4.0);
+      setAgeYears('');
+      setAgeMonths('');
+      setWeightKg('');
       setChipNumber('');
       setAvatarUrl(
         defaultSpecies === 'Perro' ? AVATAR_PRESETS.dogs[0] : AVATAR_PRESETS.cats[0]
@@ -78,32 +78,38 @@ export const PetModal: React.FC<PetModalProps> = ({
       setAvatarUrl(
         newSpecies === 'Perro' ? AVATAR_PRESETS.dogs[0] : AVATAR_PRESETS.cats[0]
       );
-      setBreed(newSpecies === 'Perro' ? 'Mestizo / Criollo' : 'Común Europeo');
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !ownerName || !ownerPhone) return;
+    if (!name.trim() || !breed.trim() || !gender || !ownerName.trim() || !ownerPhone.trim()) {
+      alert('Campos obligatorios: Nombre, Raza, Sexo, Nombre del dueño y Número del dueño.');
+      return;
+    }
 
     setSaving(true);
     try {
+      const parsedYears = ageYears !== '' ? Math.max(0, Math.floor(Number(ageYears))) : undefined;
+      const parsedMonths = ageMonths !== '' ? Math.max(0, Math.min(11, Math.floor(Number(ageMonths)))) : undefined;
+      const parsedWeight = weightKg !== '' ? Math.max(0, Number(weightKg)) : undefined;
+
       await onSave({
         ...(editingPet?.id ? { id: editingPet.id } : {}),
-        name,
+        name: name.trim(),
         species,
-        breed: breed || (species === 'Perro' ? 'Mestizo' : 'Mestizo Felino'),
+        breed: breed.trim(),
         gender,
-        ageYears: Math.max(0, Math.floor(Number(ageYears) || 0)),
-        ageMonths: Math.max(0, Math.min(11, Math.floor(Number(ageMonths) || 0))),
-        weightKg: Math.max(0.01, Number(weightKg) || 1.0),
-        chipNumber: chipNumber || undefined,
+        ageYears: parsedYears,
+        ageMonths: parsedMonths,
+        weightKg: parsedWeight,
+        chipNumber: chipNumber.trim() || undefined,
         avatarUrl: avatarUrl || (species === 'Perro' ? AVATAR_PRESETS.dogs[0] : AVATAR_PRESETS.cats[0]),
-        ownerName,
-        ownerPhone,
-        ownerEmail: ownerEmail || undefined,
-        ownerAddress: ownerAddress || undefined,
-        notes: notes || undefined
+        ownerName: ownerName.trim(),
+        ownerPhone: ownerPhone.trim(),
+        ownerEmail: ownerEmail.trim() || undefined,
+        ownerAddress: ownerAddress.trim() || undefined,
+        notes: notes.trim() || undefined
       });
 
       if (!editingPet) {
@@ -218,20 +224,21 @@ export const PetModal: React.FC<PetModalProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Raza
+                  Raza *
                 </label>
                 <input
                   type="text"
+                  required
                   value={breed}
                   onChange={(e) => setBreed(e.target.value)}
-                  placeholder={species === 'Perro' ? 'Ej: Golden Retriever, Criollo' : 'Ej: Siamés, Persa'}
+                  placeholder={species === 'Perro' ? 'Ej: Golden Retriever, Mestizo' : 'Ej: Siamés, Común Europeo'}
                   className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none text-sm text-slate-900 dark:text-white font-medium"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Género
+                  Sexo *
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -261,22 +268,21 @@ export const PetModal: React.FC<PetModalProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Peso (kg) *
+                  Peso (kg) (Opcional)
                 </label>
                 <input
                   type="number"
                   step="0.1"
-                  required
-                  min="0.1"
                   value={weightKg}
-                  onChange={(e) => setWeightKg(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setWeightKg(e.target.value)}
+                  placeholder="Ej: 5.5"
                   className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none text-sm text-slate-900 dark:text-white font-medium"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Edad
+                  Edad (Opcional)
                 </label>
                 <div className="flex gap-2">
                   <div className="flex-1">
@@ -285,7 +291,8 @@ export const PetModal: React.FC<PetModalProps> = ({
                       min="0"
                       max="30"
                       value={ageYears}
-                      onChange={(e) => setAgeYears(parseInt(e.target.value) || 0)}
+                      onChange={(e) => setAgeYears(e.target.value)}
+                      placeholder="0"
                       className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white"
                     />
                     <span className="text-[10px] text-slate-400 font-semibold">Años</span>
@@ -296,7 +303,8 @@ export const PetModal: React.FC<PetModalProps> = ({
                       min="0"
                       max="11"
                       value={ageMonths}
-                      onChange={(e) => setAgeMonths(parseInt(e.target.value) || 0)}
+                      onChange={(e) => setAgeMonths(e.target.value)}
+                      placeholder="0"
                       className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white"
                     />
                     <span className="text-[10px] text-slate-400 font-semibold">Meses</span>
@@ -323,7 +331,7 @@ export const PetModal: React.FC<PetModalProps> = ({
           <div className="space-y-2">
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
               <Camera className="w-4 h-4 text-blue-600" />
-              <span>Foto de Perfil</span>
+              <span>Foto de Perfil (Opcional)</span>
             </label>
 
             <div className="flex items-center gap-3 overflow-x-auto pb-2">
@@ -381,7 +389,7 @@ export const PetModal: React.FC<PetModalProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Teléfono de Contacto *
+                  Número del Dueño *
                 </label>
                 <input
                   type="tel"
@@ -422,7 +430,7 @@ export const PetModal: React.FC<PetModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                Notas Médicas / Alergias
+                Notas Médicas / Alergias (Opcional)
               </label>
               <textarea
                 rows={2}

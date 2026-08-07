@@ -48,7 +48,7 @@ export const VisitModal: React.FC<VisitModalProps> = ({
       setDiagnosis('');
       setTreatment('');
       setVetName('Dr. Gordian');
-      setWeightKg(pet.weightKg);
+      setWeightKg(pet.weightKg ?? '');
       setCost(450);
       setVaccineName(pet.species === 'Perro' ? 'Séctuple Canina' : 'Triple Felina');
       setAppliedDate(new Date().toISOString().split('T')[0]);

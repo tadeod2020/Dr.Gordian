@@ -77,8 +77,8 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
               <p><strong className="text-slate-700">Nombre:</strong> {pet.name}</p>
               <p><strong className="text-slate-700">Especie:</strong> {pet.species} ({pet.breed})</p>
               <p><strong className="text-slate-700">Género:</strong> {pet.gender}</p>
-              <p><strong className="text-slate-700">Edad:</strong> {pet.ageYears} años {pet.ageMonths} meses</p>
-              <p><strong className="text-slate-700">Peso:</strong> {pet.weightKg} kg</p>
+              <p><strong className="text-slate-700">Edad:</strong> {pet.ageYears !== undefined || pet.ageMonths !== undefined ? `${pet.ageYears ?? 0} años ${pet.ageMonths ?? 0} meses` : 'N/A'}</p>
+              <p><strong className="text-slate-700">Peso:</strong> {pet.weightKg !== undefined && pet.weightKg > 0 ? `${pet.weightKg} kg` : 'N/A'}</p>
               <p><strong className="text-slate-700">Nº Microchip:</strong> {pet.chipNumber || 'N/A'}</p>
             </div>
           </div>

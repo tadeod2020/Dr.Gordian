@@ -198,7 +198,7 @@ export const PetList: React.FC<PetListProps> = ({
                   {/* Weight Pill Top Right */}
                   <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 border border-white/20">
                     <Scale className="w-3 h-3 text-sky-300" />
-                    <span>{pet.weightKg} kg</span>
+                    <span>{pet.weightKg !== undefined && pet.weightKg > 0 ? `${pet.weightKg} kg` : 'Sin peso'}</span>
                   </div>
 
                   {/* Pet Name & Breed Bottom Left */}
@@ -216,7 +216,9 @@ export const PetList: React.FC<PetListProps> = ({
                       <div>
                         <p className="text-[10px] text-slate-400 uppercase font-bold">Edad</p>
                         <p className="font-bold text-slate-800 dark:text-slate-200">
-                          {pet.ageYears}a {pet.ageMonths}m
+                          {pet.ageYears !== undefined || pet.ageMonths !== undefined
+                            ? `${pet.ageYears ?? 0}a ${pet.ageMonths ?? 0}m`
+                            : 'Sin edad'}
                         </p>
                       </div>
                     </div>
@@ -332,7 +334,7 @@ export const PetList: React.FC<PetListProps> = ({
                       </div>
                     </td>
                     <td className="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">
-                      {pet.ageYears}a {pet.ageMonths}m • <span className="font-bold text-slate-900 dark:text-white">{pet.weightKg} kg</span>
+                      {pet.ageYears !== undefined || pet.ageMonths !== undefined ? `${pet.ageYears ?? 0}a ${pet.ageMonths ?? 0}m` : 'N/A'} • <span className="font-bold text-slate-900 dark:text-white">{pet.weightKg !== undefined && pet.weightKg > 0 ? `${pet.weightKg} kg` : 'Sin peso'}</span>
                     </td>
                     <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">
                       {pet.ownerName}
