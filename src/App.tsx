@@ -13,9 +13,10 @@ import { VisitModal } from './components/VisitModal';
 import { CloudSyncSettings } from './components/CloudSyncSettings';
 import { MedicalPrintView } from './components/MedicalPrintView';
 import { LoginModal } from './components/LoginModal';
+import { DailyVisitsView } from './components/DailyVisitsView';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pets'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pets' | 'daily-visits'>('daily-visits');
   const [speciesFilter, setSpeciesFilter] = useState<'all' | 'Perro' | 'Gato'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [darkMode, setDarkMode] = useState(false);
@@ -87,6 +88,8 @@ export function App() {
 
   const dogsCount = pets.filter((p) => p.species === 'Perro').length;
   const catsCount = pets.filter((p) => p.species === 'Gato').length;
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayVisitsCount = visits.filter((v) => v.date === todayStr).length;
 
   // Session Handlers
   const handleLoginSuccess = (session: UserSession) => {
@@ -129,9 +132,23 @@ export function App() {
 
   const handleSaveVisit = async (visitData: Omit<VisitRecord, 'id'>) => {
     await db.visits.add(visitData);
-    if (visitData.weightKg && visitPetTarget?.id) {
-      await db.pets.update(visitPetTarget.id, { weightKg: visitData.weightKg });
+    if (visitData.weightKg && visitData.petId) {
+      await db.pets.update(visitData.petId, { weightKg: visitData.weightKg });
     }
+  };
+
+  const handleSavePetAndVisit = async (
+    petData: Omit<Pet, 'id' | 'registeredAt'>,
+    visitData: Omit<VisitRecord, 'id' | 'petId'>
+  ) => {
+    const newPetId = await db.pets.add({
+      ...petData,
+      registeredAt: new Date().toISOString()
+    });
+    await db.visits.add({
+      ...visitData,
+      petId: Number(newPetId)
+    });
   };
 
   const handleSaveVaccine = async (vaccineData: Omit<VaccineRecord, 'id'>) => {
@@ -223,12 +240,13 @@ export function App() {
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={(tab) => setActiveTab(tab as 'dashboard' | 'pets')}
+        setActiveTab={(tab) => setActiveTab(tab as 'dashboard' | 'pets' | 'daily-visits')}
         speciesFilter={speciesFilter}
         setSpeciesFilter={setSpeciesFilter}
         totalPetsCount={pets.length}
         dogsCount={dogsCount}
         catsCount={catsCount}
+        todayVisitsCount={todayVisitsCount}
         isCloudConnected={currentCloudConfig.enabled}
         onOpenCloudSettings={() => setIsCloudSettingsOpen(true)}
         clinicSettings={currentClinicSettings}
@@ -259,7 +277,18 @@ export function App() {
 
         {/* View Switcher */}
         <div className="px-4 lg:px-8 pb-12 flex-1">
-          {activeTab === 'dashboard' ? (
+          {activeTab === 'daily-visits' ? (
+            <DailyVisitsView
+              pets={pets}
+              visits={visits}
+              onSaveVisit={handleSaveVisit}
+              onSavePetAndVisit={handleSavePetAndVisit}
+              onSelectPet={(pet) => {
+                setSelectedPet(pet);
+                setIsDetailModalOpen(true);
+              }}
+            />
+          ) : activeTab === 'dashboard' ? (
             <Dashboard
               pets={pets}
               visits={visits}

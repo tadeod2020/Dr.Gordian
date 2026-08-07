@@ -8,6 +8,7 @@ import {
   ShieldCheck, 
   Menu, 
   X,
+  Stethoscope,
   Settings
 } from 'lucide-react';
 
@@ -19,6 +20,7 @@ interface SidebarProps {
   totalPetsCount: number;
   dogsCount: number;
   catsCount: number;
+  todayVisitsCount: number;
   isCloudConnected: boolean;
   onOpenCloudSettings: () => void;
   clinicSettings: ClinicSettings;
@@ -32,6 +34,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   totalPetsCount,
   dogsCount,
   catsCount,
+  todayVisitsCount,
   isCloudConnected,
   onOpenCloudSettings,
   clinicSettings
@@ -109,6 +112,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <LayoutDashboard className="w-4 h-4" />
                 <span>Resumen General</span>
               </div>
+            </button>
+
+            {/* Consultas del Día */}
+            <button
+              onClick={() => handleNavClick('daily-visits')}
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'daily-visits'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-blue-50/80 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Stethoscope className="w-4 h-4" />
+                <span>Consultas del Día</span>
+              </div>
+              {todayVisitsCount > 0 && (
+                <span
+                  className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
+                    activeTab === 'daily-visits'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                  }`}
+                >
+                  {todayVisitsCount}
+                </span>
+              )}
             </button>
 
             {/* All Patients */}
