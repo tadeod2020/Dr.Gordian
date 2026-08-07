@@ -7,6 +7,13 @@ interface LoginModalProps {
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
+  // =========================================================
+  // DEFINIR AQUÍ LA CONTRASEÑA Y PIN DE ACCESO DEL DOCTOR:
+  // =========================================================
+  const DOCTOR_PASSWORD = "admin"; // <--- CAMBIA AQUÍ TU CONTRASEÑA
+  const DOCTOR_PIN = "1234";      // <--- CAMBIA AQUÍ TU PIN DE 4 DÍGITOS
+  // =========================================================
+
   const [authMode, setAuthMode] = useState<'password' | 'pin'>('password');
   
   // Password Mode state
@@ -35,16 +42,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
 
     setTimeout(() => {
       setLoading(false);
-      if (email.trim() && password.length >= 1) {
+      if (password === DOCTOR_PASSWORD) {
         onLoginSuccess({
           id: 'usr-active',
-          name: email.includes('@') ? email.split('@')[0] : email,
-          email,
+          name: email.trim() ? (email.includes('@') ? email.split('@')[0] : email) : 'Dr. Gordian',
+          email: email.trim() || 'contacto@drgordian.com',
           role: 'Administrador',
           avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=150&q=80'
         });
       } else {
-        setErrorMsg('Por favor ingresa tu usuario y contraseña');
+        setErrorMsg('Contraseña incorrecta. Por favor intenta de nuevo.');
       }
     }, 400);
   };
@@ -56,10 +63,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
       setErrorMsg('');
 
       if (nextPin.length === 4) {
+        const fullPin = nextPin.join('');
         setLoading(true);
         setTimeout(() => {
           setLoading(false);
-          onLoginSuccess(DEFAULT_USER);
+          if (fullPin === DOCTOR_PIN) {
+            onLoginSuccess(DEFAULT_USER);
+          } else {
+            setErrorMsg('PIN incorrecto. Intenta de nuevo.');
+            setPinDigits([]);
+          }
         }, 400);
       }
     }
