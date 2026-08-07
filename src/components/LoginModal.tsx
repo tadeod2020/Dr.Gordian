@@ -8,10 +8,11 @@ interface LoginModalProps {
 
 export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
   // =========================================================
-  // DEFINIR AQUÍ LA CONTRASEÑA Y PIN DE ACCESO DEL DOCTOR:
+  // DEFINIR AQUÍ EL CORREO, CONTRASEÑA Y PIN DEL DOCTOR:
   // =========================================================
-  const DOCTOR_PASSWORD = "admin"; // <--- CAMBIA AQUÍ TU CONTRASEÑA
-  const DOCTOR_PIN = "1234";      // <--- CAMBIA AQUÍ TU PIN DE 4 DÍGITOS
+  const DOCTOR_EMAIL = "admin@drgordian.com"; // <--- CAMBIA AQUÍ TU CORREO DE ACCESO
+  const DOCTOR_PASSWORD = "admin";           // <--- CAMBIA AQUÍ TU CONTRASEÑA DE ACCESO
+  const DOCTOR_PIN = "1234";                // <--- CAMBIA AQUÍ TU PIN DE 4 DÍGITOS
   // =========================================================
 
   const [authMode, setAuthMode] = useState<'password' | 'pin'>('password');
@@ -30,7 +31,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
   const DEFAULT_USER: UserSession = {
     id: 'usr-001',
     name: 'Dr. Gordian',
-    email: 'contacto@drgordian.com',
+    email: DOCTOR_EMAIL,
     role: 'Administrador',
     avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=150&q=80'
   };
@@ -42,16 +43,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
 
     setTimeout(() => {
       setLoading(false);
-      if (password === DOCTOR_PASSWORD) {
+      if (email.trim().toLowerCase() === DOCTOR_EMAIL.toLowerCase() && password === DOCTOR_PASSWORD) {
         onLoginSuccess({
           id: 'usr-active',
-          name: email.trim() ? (email.includes('@') ? email.split('@')[0] : email) : 'Dr. Gordian',
-          email: email.trim() || 'contacto@drgordian.com',
+          name: 'Dr. Gordian',
+          email: DOCTOR_EMAIL,
           role: 'Administrador',
           avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=150&q=80'
         });
       } else {
-        setErrorMsg('Contraseña incorrecta. Por favor intenta de nuevo.');
+        setErrorMsg('Correo o contraseña incorrectos. Por favor intenta de nuevo.');
       }
     }, 400);
   };
