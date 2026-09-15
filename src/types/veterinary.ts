@@ -79,3 +79,16 @@ export interface UserSession {
   role: 'Administrador' | 'Veterinario' | 'Recepción';
   avatarUrl: string;
 }
+
+export type DocumentCategory = 'Contratos' | 'Formatos Médicos' | 'Avisos de Privacidad' | 'Servicios' | 'Consentimientos';
+
+export interface LegalDocumentTemplate {
+  id: string;
+  fileName: string;
+  title: string;
+  category: DocumentCategory;
+  description: string;
+  content: string;
+  updatedAt?: string;
+}
+

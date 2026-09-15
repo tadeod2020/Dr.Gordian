@@ -14,9 +14,10 @@ import { CloudSyncSettings } from './components/CloudSyncSettings';
 import { MedicalPrintView } from './components/MedicalPrintView';
 import { LoginModal } from './components/LoginModal';
 import { DailyVisitsView } from './components/DailyVisitsView';
+import { DocumentManager } from './components/DocumentManager';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pets' | 'daily-visits'>('daily-visits');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pets' | 'daily-visits' | 'documents'>('daily-visits');
   const [speciesFilter, setSpeciesFilter] = useState<'all' | 'Perro' | 'Gato'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [darkMode, setDarkMode] = useState(false);
@@ -277,7 +278,9 @@ export function App() {
 
         {/* View Switcher */}
         <div className="px-4 lg:px-8 pb-12 flex-1">
-          {activeTab === 'daily-visits' ? (
+          {activeTab === 'documents' ? (
+            <DocumentManager pets={pets} clinicSettings={currentClinicSettings} />
+          ) : activeTab === 'daily-visits' ? (
             <DailyVisitsView
               pets={pets}
               visits={visits}

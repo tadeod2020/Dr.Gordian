@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { Pet, VisitRecord, VaccineRecord, CloudConfig, ClinicSettings } from '../types/veterinary';
+import type { Pet, VisitRecord, VaccineRecord, CloudConfig, ClinicSettings, LegalDocumentTemplate } from '../types/veterinary';
 
 export class DrGordianDatabase extends Dexie {
   pets!: Table<Pet>;
@@ -7,15 +7,17 @@ export class DrGordianDatabase extends Dexie {
   vaccines!: Table<VaccineRecord>;
   cloudConfig!: Table<CloudConfig>;
   clinicSettings!: Table<ClinicSettings>;
+  customDocuments!: Table<LegalDocumentTemplate>;
 
   constructor() {
     super('DrGordianVetDB');
-    this.version(2).stores({
+    this.version(3).stores({
       pets: '++id, name, species, breed, ownerName, chipNumber, registeredAt',
       visits: '++id, petId, date, reason',
       vaccines: '++id, petId, vaccineName, nextDueDate, status',
       cloudConfig: '++id',
-      clinicSettings: '++id'
+      clinicSettings: '++id',
+      customDocuments: 'id, fileName, title, category'
     });
   }
 }

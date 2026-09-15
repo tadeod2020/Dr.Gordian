@@ -9,7 +9,8 @@ import {
   Menu, 
   X,
   Stethoscope,
-  Settings
+  Settings,
+  FileText
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -138,6 +139,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   {todayVisitsCount}
                 </span>
               )}
+            </button>
+
+            {/* Documentos & Contratos */}
+            <button
+              onClick={() => handleNavClick('documents')}
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'documents'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-blue-50/80 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <FileText className="w-4 h-4" />
+                <span>Documentos & Contratos</span>
+              </div>
+              <span
+                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md ${
+                  activeTab === 'documents'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                }`}
+              >
+                13
+              </span>
             </button>
 
             {/* All Patients */}
