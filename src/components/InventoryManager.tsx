@@ -203,7 +203,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = () => {
 
         {/* Metric 3: Low Stock Warning (Highlighted with BorderBeam if low stock exists) */}
         <MagicCard className="p-5 relative">
-          {lowStockCount > 0 && <BorderBeam colorFrom="#f59e0b" colorTo="#ef4444" size={150} duration={8} />}
+          {lowStockCount > 0 && <BorderBeam colorFrom="#f59e0b" colorTo="#ef4444" />}
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">

@@ -5,6 +5,7 @@ import { INITIAL_LEGAL_DOCUMENTS } from '../data/legalDocuments';
 import type { LegalDocumentTemplate, DocumentCategory, Pet, ClinicSettings } from '../types/veterinary';
 import { DocumentEditorModal } from './DocumentEditorModal';
 import { DocumentPrintModal } from './DocumentPrintModal';
+import { MagicCard } from './magicui/MagicCard';
 import { FileText, Search, Edit3, Printer, CheckCircle, Sparkles } from 'lucide-react';
 
 interface DocumentManagerProps {
@@ -119,9 +120,9 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
             const isCustomized = customDocsList.some((c) => c.id === doc.id);
 
             return (
-              <div
+              <MagicCard
                 key={doc.id}
-                className="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/90 dark:border-slate-700 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between group"
+                className="p-5 flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
@@ -161,7 +162,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
                     Imprimir / PDF
                   </button>
                 </div>
-              </div>
+              </MagicCard>
             );
           })}
         </div>

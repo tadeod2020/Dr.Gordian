@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import type { Pet } from '../types/veterinary';
+import { MagicCard } from './magicui/MagicCard';
+import { ShimmerButton } from './magicui/ShimmerButton';
+
 import { 
   Dog, 
   Cat, 
@@ -120,13 +123,13 @@ export const PetList: React.FC<PetListProps> = ({
             </button>
           </div>
 
-          <button
+          <ShimmerButton
             onClick={onOpenAddPetModal}
-            className="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 flex items-center gap-1.5 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>Registrar</span>
-          </button>
+          </ShimmerButton>
         </div>
       </div>
 
@@ -166,9 +169,9 @@ export const PetList: React.FC<PetListProps> = ({
         /* GRID VIEW (Apple Clean White Cards) */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPets.map((pet) => (
-            <div
+            <MagicCard
               key={pet.id}
-              className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/90 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 overflow-hidden group flex flex-col justify-between shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transform hover:-translate-y-1"
+              className="group flex flex-col justify-between hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300"
             >
               <div>
                 {/* Card Image Banner */}
@@ -281,7 +284,7 @@ export const PetList: React.FC<PetListProps> = ({
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </MagicCard>
           ))}
         </div>
       ) : (

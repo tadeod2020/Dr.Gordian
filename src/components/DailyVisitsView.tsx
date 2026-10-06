@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import type { Pet, VisitRecord } from '../types/veterinary';
 import { AVATAR_PRESETS } from '../db/database';
+import { MagicCard } from './magicui/MagicCard';
+import { NumberTicker } from './magicui/NumberTicker';
+import { ShimmerButton } from './magicui/ShimmerButton';
 import { 
   Calendar, 
   Stethoscope, 
@@ -261,14 +264,13 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
               )}
             </div>
 
-            <button
-              type="button"
+            <ShimmerButton
               onClick={handleOpenModal}
-              className="px-5 py-3 rounded-2xl bg-white text-blue-800 font-extrabold text-xs shadow-md hover:bg-blue-50 transition-all flex items-center justify-center gap-2 transform hover:scale-105 active:scale-98"
+              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               <span>Registrar Consulta de Hoy</span>
-            </button>
+            </ShimmerButton>
           </div>
         </div>
       </div>
@@ -276,14 +278,14 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Total Visits Today */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-sm flex items-center justify-between">
+        <MagicCard className="p-5 flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               {isTodaySelected ? 'Consultas de Hoy' : 'Consultas en Fecha'}
             </p>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-                {dayVisits.length}
+              <span className="text-3xl font-black text-slate-900 dark:text-white">
+                <NumberTicker value={dayVisits.length} />
               </span>
               <span className="text-xs font-bold text-blue-600">atenciones</span>
             </div>
@@ -291,17 +293,17 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
           <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center">
             <Stethoscope className="w-6 h-6" />
           </div>
-        </div>
+        </MagicCard>
 
         {/* Metric 2: Today's Revenue */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-sm flex items-center justify-between">
+        <MagicCard className="p-5 flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Ingresos Totales
             </p>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                ${totalCost}
+              <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
+                $<NumberTicker value={totalCost} decimalPlaces={2} />
               </span>
               <span className="text-xs font-semibold text-slate-400">MXN</span>
             </div>
@@ -309,15 +311,15 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
           <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center">
             <DollarSign className="w-6 h-6" />
           </div>
-        </div>
+        </MagicCard>
 
         {/* Metric 3: Dogs */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-sm flex items-center justify-between">
+        <MagicCard className="p-5 flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Caninos Atendidos</p>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-sky-600 dark:text-sky-400">
-                {dogsCount}
+              <span className="text-3xl font-black text-sky-600 dark:text-sky-400">
+                <NumberTicker value={dogsCount} />
               </span>
               <span className="text-xs font-semibold text-slate-400">perros</span>
             </div>
@@ -325,15 +327,15 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
           <div className="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-sky-950 text-sky-600 flex items-center justify-center">
             <Dog className="w-6 h-6" />
           </div>
-        </div>
+        </MagicCard>
 
         {/* Metric 4: Cats */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-sm flex items-center justify-between">
+        <MagicCard className="p-5 flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Felinos Atendidos</p>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">
-                {catsCount}
+              <span className="text-3xl font-black text-indigo-600 dark:text-indigo-400">
+                <NumberTicker value={catsCount} />
               </span>
               <span className="text-xs font-semibold text-slate-400">gatos</span>
             </div>
@@ -341,7 +343,7 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
           <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 flex items-center justify-center">
             <Cat className="w-6 h-6" />
           </div>
-        </div>
+        </MagicCard>
       </div>
 
       {/* Consultations List Section */}

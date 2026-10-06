@@ -2,46 +2,22 @@ import React from 'react';
 
 interface BorderBeamProps {
   className?: string;
-  size?: number;
-  duration?: number;
-  borderWidth?: number;
-  anchor?: number;
   colorFrom?: string;
   colorTo?: string;
-  delay?: number;
 }
 
 export const BorderBeam: React.FC<BorderBeamProps> = ({
   className = '',
-  size = 200,
-  duration = 15,
-  anchor = 90,
-  borderWidth = 1.5,
-  colorFrom = '#3b82f6',
-  colorTo = '#93c5fd',
-  delay = 0,
+  colorFrom = '#f59e0b',
+  colorTo = '#ef4444',
 }) => {
   return (
     <div
+      className={`pointer-events-none absolute -inset-0.5 rounded-[inherit] opacity-75 blur-sm animate-pulse transition-opacity ${className}`}
       style={{
-        '--size': size,
-        '--duration': duration,
-        '--anchor': anchor,
-        '--border-width': borderWidth,
-        '--color-from': colorFrom,
-        '--color-to': colorTo,
-        '--delay': delay,
-      } as React.CSSProperties}
-      className={`pointer-events-none absolute inset-0 rounded-[inherit] border border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)] ${className}`}
-    >
-      <div
-        className="absolute aspect-square w-[calc(var(--size)*1px)] animate-border-beam bg-gradient-to-l from-[var(--color-from)] via-[var(--color-to)] to-transparent"
-        style={{
-          offsetPath: `rect(0 auto auto 0 round calc(var(--size)*1px))`,
-          animationDuration: `${duration}s`,
-          animationDelay: `${delay}s`,
-        }}
-      />
-    </div>
+        background: `linear-gradient(90deg, ${colorFrom}, ${colorTo}, ${colorFrom})`,
+      }}
+    />
   );
 };
+

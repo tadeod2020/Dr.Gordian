@@ -1,5 +1,8 @@
 import React from 'react';
 import type { Pet, VisitRecord, VaccineRecord } from '../types/veterinary';
+import { MagicCard } from './magicui/MagicCard';
+import { NumberTicker } from './magicui/NumberTicker';
+import { ShimmerButton } from './magicui/ShimmerButton';
 import { 
   PawPrint, 
   Dog, 
@@ -63,13 +66,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
             Gestiona la atención médica, vacunas y consultas de tus pacientes desde cualquier computadora o tablet con respaldo en la nube.
           </p>
           <div className="pt-2 flex flex-wrap items-center gap-3">
-            <button
+            <ShimmerButton
               onClick={onOpenAddPetModal}
-              className="px-5 py-2.5 rounded-2xl bg-white text-blue-700 font-bold text-sm hover:bg-blue-50 transition-all shadow-md transform hover:scale-105 active:scale-98 flex items-center gap-2"
+              className="bg-white text-blue-700 hover:bg-blue-50"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               <span>Registrar Nueva Mascota</span>
-            </button>
+            </ShimmerButton>
             <button
               onClick={() => onGoToPetsTab('all')}
               className="px-4 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-semibold text-sm transition-all backdrop-blur-md flex items-center gap-2"
@@ -84,12 +87,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-sky-400/20 blur-3xl pointer-events-none rounded-full transform translate-x-1/4" />
       </div>
 
-      {/* Metrics Row - High Contrast Clean Cards */}
+      {/* Metrics Row - High Contrast Magic Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Total Pets */}
-        <div 
+        <MagicCard 
           onClick={() => onGoToPetsTab('all')}
-          className="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-sm hover:border-blue-500 transition-all cursor-pointer group transform hover:-translate-y-1"
+          className="p-5 cursor-pointer group hover:border-blue-500 transition-all"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -101,16 +104,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              {totalPets}
+              <NumberTicker value={totalPets} />
             </span>
             <span className="text-xs font-semibold text-slate-500">registrados</span>
           </div>
-        </div>
+        </MagicCard>
 
         {/* Metric 2: Dogs */}
-        <div 
+        <MagicCard 
           onClick={() => onGoToPetsTab('Perro')}
-          className="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-sm hover:border-sky-500 transition-all cursor-pointer group transform hover:-translate-y-1"
+          className="p-5 cursor-pointer group hover:border-sky-500 transition-all"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -122,18 +125,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              {dogs.length}
+              <NumberTicker value={dogs.length} />
             </span>
             <span className="text-xs font-bold text-sky-600 dark:text-sky-400">
               {dogPercentage}% del total
             </span>
           </div>
-        </div>
+        </MagicCard>
 
         {/* Metric 3: Cats */}
-        <div 
+        <MagicCard 
           onClick={() => onGoToPetsTab('Gato')}
-          className="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-sm hover:border-indigo-500 transition-all cursor-pointer group transform hover:-translate-y-1"
+          className="p-5 cursor-pointer group hover:border-indigo-500 transition-all"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -145,16 +148,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              {cats.length}
+              <NumberTicker value={cats.length} />
             </span>
             <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
               {catPercentage}% del total
             </span>
           </div>
-        </div>
+        </MagicCard>
 
         {/* Metric 4: Consultations & Vaccines */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200/90 dark:border-slate-700 shadow-sm">
+        <MagicCard className="p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Consultas Atendidas
@@ -166,7 +169,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="mt-3 flex items-center justify-between">
             <div>
               <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-                {visits.length}
+                <NumberTicker value={visits.length} />
               </span>
               <span className="text-xs text-slate-500 ml-1 font-semibold">consultas</span>
             </div>
@@ -175,7 +178,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <span>{pendingVaccines.length} pendientes</span>
             </div>
           </div>
-        </div>
+        </MagicCard>
       </div>
 
       {/* Breakdown & Recent Activity Section */}
