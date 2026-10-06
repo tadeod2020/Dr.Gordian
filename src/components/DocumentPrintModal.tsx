@@ -19,7 +19,7 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
   const paragraphs = doc.content.split('\n').filter((p) => p.trim());
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md overflow-y-auto p-4 sm:p-8">
+    <div className="print-modal-container fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md overflow-y-auto p-4 sm:p-8 print:p-0 print:bg-white print:static print:overflow-visible print:block">
       {/* Non-printable action header toolbar */}
       <div className="no-print max-w-4xl mx-auto mb-6 flex items-center justify-between p-4 bg-slate-800 text-white rounded-2xl shadow-xl border border-slate-700">
         <div className="flex items-center gap-3">
@@ -53,7 +53,7 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
       </div>
 
       {/* Printable Sheet */}
-      <div className="max-w-4xl mx-auto bg-white text-slate-900 p-8 sm:p-10 border border-slate-200 rounded-xl shadow-2xl print:border-none print:shadow-none print:p-0">
+      <div className="printable-sheet max-w-4xl mx-auto bg-white text-slate-900 p-8 sm:p-10 border border-slate-200 rounded-xl shadow-2xl print:border-none print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none">
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-blue-900 pb-3 mb-6">
           <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-12 w-auto object-contain" />
@@ -80,7 +80,7 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
 
             if (isHeading) {
               return (
-                <h3 key={idx} className="text-xs font-bold text-blue-900 uppercase bg-slate-100 p-1.5 rounded text-center my-3">
+                <h3 key={idx} className="text-xs font-bold text-blue-900 uppercase bg-slate-100 p-1.5 rounded text-center my-3 print:bg-slate-100 print:text-blue-950">
                   {p}
                 </h3>
               );
@@ -95,7 +95,7 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
         </div>
 
         {/* Signature & Stamp Section */}
-        <div className="mt-12 pt-6 border-t border-slate-300 flex justify-around items-end text-center print:page-break-inside-avoid">
+        <div className="mt-12 pt-6 border-t border-slate-300 flex justify-around items-end text-center avoid-break print:page-break-inside-avoid">
           <div className="w-5/12 border-t border-slate-900 pt-2">
             <p className="text-xs font-bold text-slate-900">EL PROFESIONISTA / VETERINARIO</p>
             <p className="text-[11px] text-slate-600">{clinicSettings.vetDirector}</p>

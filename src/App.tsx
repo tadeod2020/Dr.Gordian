@@ -281,60 +281,66 @@ export function App() {
           {activeTab === 'documents' ? (
             <DocumentManager pets={pets} clinicSettings={currentClinicSettings} />
           ) : activeTab === 'daily-visits' ? (
-            <DailyVisitsView
-              pets={pets}
-              visits={visits}
-              onSaveVisit={handleSaveVisit}
-              onSavePetAndVisit={handleSavePetAndVisit}
-              onSelectPet={(pet) => {
-                setSelectedPet(pet);
-                setIsDetailModalOpen(true);
-              }}
-            />
+            <div className="no-print">
+              <DailyVisitsView
+                pets={pets}
+                visits={visits}
+                onSaveVisit={handleSaveVisit}
+                onSavePetAndVisit={handleSavePetAndVisit}
+                onSelectPet={(pet) => {
+                  setSelectedPet(pet);
+                  setIsDetailModalOpen(true);
+                }}
+              />
+            </div>
           ) : activeTab === 'dashboard' ? (
-            <Dashboard
-              pets={pets}
-              visits={visits}
-              vaccines={vaccines}
-              onOpenAddPetModal={() => {
-                setEditingPet(null);
-                setIsPetModalOpen(true);
-              }}
-              onSelectPet={(pet) => {
-                setSelectedPet(pet);
-                setIsDetailModalOpen(true);
-              }}
-              onGoToPetsTab={(filter) => {
-                if (filter) setSpeciesFilter(filter);
-                setActiveTab('pets');
-              }}
-            />
+            <div className="no-print">
+              <Dashboard
+                pets={pets}
+                visits={visits}
+                vaccines={vaccines}
+                onOpenAddPetModal={() => {
+                  setEditingPet(null);
+                  setIsPetModalOpen(true);
+                }}
+                onSelectPet={(pet) => {
+                  setSelectedPet(pet);
+                  setIsDetailModalOpen(true);
+                }}
+                onGoToPetsTab={(filter) => {
+                  if (filter) setSpeciesFilter(filter);
+                  setActiveTab('pets');
+                }}
+              />
+            </div>
           ) : (
-            <PetList
-              pets={pets}
-              speciesFilter={speciesFilter}
-              setSpeciesFilter={setSpeciesFilter}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              onOpenAddPetModal={() => {
-                setEditingPet(null);
-                setIsPetModalOpen(true);
-              }}
-              onSelectPet={(pet) => {
-                setSelectedPet(pet);
-                setIsDetailModalOpen(true);
-              }}
-              onEditPet={(pet) => {
-                setEditingPet(pet);
-                setIsPetModalOpen(true);
-              }}
-              onDeletePet={handleDeletePet}
-              onAddVisitForPet={(pet) => {
-                setVisitPetTarget(pet);
-                setVisitModalType('visit');
-                setIsVisitModalOpen(true);
-              }}
-            />
+            <div className="no-print">
+              <PetList
+                pets={pets}
+                speciesFilter={speciesFilter}
+                setSpeciesFilter={setSpeciesFilter}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                onOpenAddPetModal={() => {
+                  setEditingPet(null);
+                  setIsPetModalOpen(true);
+                }}
+                onSelectPet={(pet) => {
+                  setSelectedPet(pet);
+                  setIsDetailModalOpen(true);
+                }}
+                onEditPet={(pet) => {
+                  setEditingPet(pet);
+                  setIsPetModalOpen(true);
+                }}
+                onDeletePet={handleDeletePet}
+                onAddVisitForPet={(pet) => {
+                  setVisitPetTarget(pet);
+                  setVisitModalType('visit');
+                  setIsVisitModalOpen(true);
+                }}
+              />
+            </div>
           )}
         </div>
       </main>
