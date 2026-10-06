@@ -156,9 +156,101 @@ export async function syncLocalToSupabase() {
       }
     }
 
+    // 4. SYNC INVENTORY (Push & Pull)
+    const localInventory = await db.inventory.toArray();
+    for (const item of localInventory) {
+      const { data: existingInv } = await supabase
+        .from('inventory')
+        .select('id')
+        .eq('name', item.name)
+        .eq('category', item.category);
+
+      if (!existingInv || existingInv.length === 0) {
+        await supabase.from('inventory').insert({
+          name: item.name,
+          category: item.category,
+          barcode: item.barcode || null,
+          price: item.price,
+          cost: item.cost || 0,
+          stock: item.stock,
+          min_stock: item.minStock,
+          unit: item.unit,
+          supplier: item.supplier || null,
+          expiration_date: item.expirationDate || null,
+          notes: item.notes || null,
+          updated_at: item.updatedAt || new Date().toISOString()
+        });
+      } else {
+        await supabase
+          .from('inventory')
+          .update({
+            price: item.price,
+            cost: item.cost || 0,
+            stock: item.stock,
+            min_stock: item.minStock,
+            barcode: item.barcode || null,
+            supplier: item.supplier || null,
+            expiration_date: item.expirationDate || null,
+            notes: item.notes || null,
+            updated_at: item.updatedAt || new Date().toISOString()
+          })
+          .eq('id', existingInv[0].id);
+      }
+    }
+
+    // Download remote inventory from Supabase into local database
+    const { data: remoteInventory } = await supabase.from('inventory').select('*');
+    if (remoteInventory && remoteInventory.length > 0) {
+      const updatedLocalInv = await db.inventory.toArray();
+      for (const rItem of remoteInventory) {
+        const localMatch = updatedLocalInv.find(
+          (lItem) => (lItem.name || '').toLowerCase() === (rItem.name || '').toLowerCase() && lItem.category === rItem.category
+        );
+        if (!localMatch) {
+          await db.inventory.add({
+            name: rItem.name,
+            category: rItem.category,
+            barcode: rItem.barcode || undefined,
+            price: rItem.price,
+            cost: rItem.cost || undefined,
+            stock: rItem.stock,
+            minStock: rItem.min_stock,
+            unit: rItem.unit || 'Piezas',
+            supplier: rItem.supplier || undefined,
+            expirationDate: rItem.expiration_date || undefined,
+            notes: rItem.notes || undefined,
+            updatedAt: rItem.updated_at || new Date().toISOString()
+          });
+        } else if (localMatch.id) {
+          await db.inventory.update(localMatch.id, {
+            stock: rItem.stock,
+            price: rItem.price,
+            cost: rItem.cost || undefined,
+            minStock: rItem.min_stock,
+            updatedAt: rItem.updated_at || new Date().toISOString()
+          });
+        }
+      }
+    }
+
     return { success: true };
   } catch (err) {
     console.error('Supabase sync error:', err);
+    return { success: false, error: err };
+  }
+}
+
+export async function clearAllInventoryRemoteAndLocal() {
+  try {
+    // Clear IndexedDB local inventory
+    await db.inventory.clear();
+
+    // Clear Supabase remote inventory
+    await supabase.from('inventory').delete().neq('id', 0);
+
+    return { success: true };
+  } catch (err) {
+    console.error('Error clearing inventory:', err);
     return { success: false, error: err };
   }
 }

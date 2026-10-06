@@ -4,6 +4,8 @@ import { db } from '../db/database';
 import type { InventoryItem, InventoryCategory, Pet, ClinicSettings } from '../types/veterinary';
 import { InventoryItemModal } from './InventoryItemModal';
 import { InventoryDeductModal } from './InventoryDeductModal';
+import { supabase } from '../lib/supabase';
+import { syncLocalToSupabase, clearAllInventoryRemoteAndLocal } from '../lib/supabaseSync';
 
 import { MagicCard } from './magicui/MagicCard';
 import { ShimmerButton } from './magicui/ShimmerButton';
@@ -24,7 +26,8 @@ import {
   TrendingDown, 
   Barcode, 
   Calendar,
-  Layers3
+  Layers3,
+  RefreshCw
 } from 'lucide-react';
 
 interface InventoryManagerProps {
@@ -46,6 +49,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<InventoryCategory | 'Todos'>('Todos');
   const [onlyLowStock, setOnlyLowStock] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Modals state
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
@@ -84,12 +88,43 @@ export const InventoryManager: React.FC<InventoryManagerProps> = () => {
     } else {
       await db.inventory.add(itemPayload as InventoryItem);
     }
+    // Auto sync single item addition/edit with cloud
+    try {
+      await syncLocalToSupabase();
+    } catch (e) {
+      console.warn('Background sync on item save warning:', e);
+    }
   };
 
-  const handleDeleteItem = async (id?: number) => {
-    if (!id) return;
-    if (confirm('¿Estás seguro de que deseas eliminar este producto del inventario?')) {
-      await db.inventory.delete(id);
+  const handleDeleteItem = async (item: InventoryItem) => {
+    if (!item.id) return;
+    if (confirm(`¿Estás seguro de que deseas eliminar "${item.name}" del inventario?`)) {
+      await db.inventory.delete(item.id);
+      try {
+        await supabase.from('inventory').delete().eq('name', item.name).eq('category', item.category);
+      } catch (err) {
+        console.error('Error deleting item from Supabase:', err);
+      }
+    }
+  };
+
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    const res = await syncLocalToSupabase();
+    setIsSyncing(false);
+    if (res.success) {
+      alert('✅ Inventario sincronizado correctamente con Supabase.');
+    } else {
+      alert('⚠️ Ocurrió un detalle durante la sincronización.');
+    }
+  };
+
+  const handleClearAllInventory = async () => {
+    if (confirm('⚠️ ¿Estás seguro de que deseas VACIAR TODO EL INVENTARIO?\nEsta acción borrará permanentemente todos los productos tanto en la base de datos local como en Supabase.')) {
+      setIsSyncing(true);
+      await clearAllInventoryRemoteAndLocal();
+      setIsSyncing(false);
+      alert('✅ El inventario ha sido limpiado por completo.');
     }
   };
 
@@ -136,26 +171,47 @@ export const InventoryManager: React.FC<InventoryManagerProps> = () => {
           <div className="max-w-2xl space-y-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-white/30">
               <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
-              Módulo de Control de Medicamentos
+              Módulo de Control de Medicamentos & Nube
             </span>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               Inventario & Productos Veterinarios
             </h1>
             <p className="text-sm text-blue-100 font-medium leading-relaxed">
-              Registra medicamentos, vacunas, insumos y alimentos con sus precios. Realiza descuentos rápidos de stock en 1-clic y mantén alertas automáticas de reabastecimiento.
+              Registra medicamentos, vacunas, insumos y alimentos con sus precios. Realiza descuentos rápidos de stock en 1-clic y mantén alertas automáticas de reabastecimiento sincronizados con Supabase.
             </p>
           </div>
 
-          <ShimmerButton
-            onClick={() => {
-              setEditingItem(null);
-              setIsItemModalOpen(true);
-            }}
-            className="self-start md:self-center shrink-0"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>Agregar Producto</span>
-          </ShimmerButton>
+          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center shrink-0">
+            <button
+              onClick={handleManualSync}
+              disabled={isSyncing}
+              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-50"
+              title="Sincronizar inventario local con Supabase"
+            >
+              <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+              <span>{isSyncing ? 'Sincronizando...' : 'Sincronizar Nube'}</span>
+            </button>
+
+            <button
+              onClick={handleClearAllInventory}
+              disabled={isSyncing}
+              className="px-4 py-2.5 rounded-2xl bg-rose-500/80 hover:bg-rose-600 backdrop-blur-md border border-rose-300/40 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-md"
+              title="Borrar todos los productos del inventario en local y Supabase"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Vaciar Inventario</span>
+            </button>
+
+            <ShimmerButton
+              onClick={() => {
+                setEditingItem(null);
+                setIsItemModalOpen(true);
+              }}
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span>Agregar Producto</span>
+            </ShimmerButton>
+          </div>
         </div>
       </div>
 
@@ -454,7 +510,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = () => {
                       </button>
 
                       <button
-                        onClick={() => handleDeleteItem(item.id)}
+                        onClick={() => handleDeleteItem(item)}
                         className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-all"
                         title="Eliminar producto"
                       >
