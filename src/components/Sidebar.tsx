@@ -10,7 +10,8 @@ import {
   X,
   Stethoscope,
   Settings,
-  FileText
+  FileText,
+  Package
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -162,6 +163,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }`}
               >
                 13
+              </span>
+            </button>
+
+            {/* Inventario & Productos */}
+            <button
+              onClick={() => handleNavClick('inventory')}
+              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'inventory'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-blue-50/80 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Package className="w-4 h-4" />
+                <span>Inventario & Productos</span>
+              </div>
+              <span
+                className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md ${
+                  activeTab === 'inventory'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
+                }`}
+              >
+                Nuevo
               </span>
             </button>
 

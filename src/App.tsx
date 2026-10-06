@@ -15,9 +15,10 @@ import { MedicalPrintView } from './components/MedicalPrintView';
 import { LoginModal } from './components/LoginModal';
 import { DailyVisitsView } from './components/DailyVisitsView';
 import { DocumentManager } from './components/DocumentManager';
+import { InventoryManager } from './components/InventoryManager';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pets' | 'daily-visits' | 'documents'>('daily-visits');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pets' | 'daily-visits' | 'documents' | 'inventory'>('daily-visits');
   const [speciesFilter, setSpeciesFilter] = useState<'all' | 'Perro' | 'Gato'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [darkMode, setDarkMode] = useState(false);
@@ -241,7 +242,7 @@ export function App() {
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={(tab) => setActiveTab(tab as 'dashboard' | 'pets' | 'daily-visits')}
+        setActiveTab={(tab) => setActiveTab(tab as 'dashboard' | 'pets' | 'daily-visits' | 'documents' | 'inventory')}
         speciesFilter={speciesFilter}
         setSpeciesFilter={setSpeciesFilter}
         totalPetsCount={pets.length}
@@ -278,7 +279,9 @@ export function App() {
 
         {/* View Switcher */}
         <div className="px-4 lg:px-8 pb-12 flex-1">
-          {activeTab === 'documents' ? (
+          {activeTab === 'inventory' ? (
+            <InventoryManager pets={pets} clinicSettings={currentClinicSettings} />
+          ) : activeTab === 'documents' ? (
             <DocumentManager pets={pets} clinicSettings={currentClinicSettings} />
           ) : activeTab === 'daily-visits' ? (
             <div className="no-print">

@@ -92,3 +92,22 @@ export interface LegalDocumentTemplate {
   updatedAt?: string;
 }
 
+export type InventoryCategory = 'Medicamentos' | 'Vacunas' | 'Alimentos' | 'Accesorios' | 'Material Quirúrgico' | 'Higiene & Estética';
+
+export interface InventoryItem {
+  id?: number;
+  name: string;
+  category: InventoryCategory;
+  barcode?: string;
+  price: number;
+  cost?: number;
+  stock: number;
+  minStock: number;
+  unit: string;
+  supplier?: string;
+  expirationDate?: string;
+  notes?: string;
+  updatedAt: string;
+}
+
+
