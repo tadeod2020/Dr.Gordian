@@ -28,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout
 }) => {
   return (
-    <header className="no-print sticky top-0 z-30 px-4 lg:px-8 py-3.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs">
+    <header className="no-print print:hidden sticky top-0 z-30 px-4 lg:px-8 py-3.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs">
       {/* Search Input Bar */}
       <div className="relative w-full md:w-80 group">
         <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" />

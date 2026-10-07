@@ -28,22 +28,25 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
   return (
     <div className="print-modal-container fixed inset-0 z-50 bg-white dark:bg-slate-900 overflow-y-auto p-8 print:p-0 print:bg-white print:static print:overflow-visible print:block">
       {/* Non-printable action header */}
-      <div className="no-print max-w-4xl mx-auto mb-6 flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl">
+      <div className="no-print print:hidden max-w-4xl mx-auto mb-6 flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-md">
         <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
-          Vista Previa de Impresión - Ficha Médica de {clinicSettings.name}
+          Vista Previa de Impresión - Ficha Médica de {pet.name} ({clinicSettings.name})
         </span>
         <div className="flex items-center gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200"
+            className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
           >
             Volver
           </button>
           <button
             onClick={handlePrint}
-            className="px-5 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-md hover:bg-blue-700"
+            className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md transition-all flex items-center gap-2"
           >
-            Imprimir Documento
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Imprimir Documento / PDF
           </button>
         </div>
       </div>
@@ -51,14 +54,14 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
       {/* Printable Sheet */}
       <div className="printable-sheet max-w-4xl mx-auto bg-white text-slate-900 p-8 border border-slate-300 rounded-lg shadow-sm print:border-none print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none">
         {/* Header */}
-        <div className="flex items-center justify-between border-b-2 border-blue-600 pb-4 mb-6">
+        <div className="flex items-center justify-between border-b-2 border-blue-900 pb-4 mb-6">
           <div className="flex items-center gap-4">
-            <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-12 w-auto object-contain" />
+            <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-14 w-auto object-contain" />
             <div>
               <h1 className="text-xl font-black text-blue-900 tracking-tight uppercase">
                 {clinicSettings.name}
               </h1>
-              <p className="text-xs text-slate-600 font-semibold mt-0.5">
+              <p className="text-xs text-blue-700 font-bold mt-0.5">
                 {clinicSettings.subtitle} • Tel: {clinicSettings.phone}
               </p>
               <p className="text-[11px] text-slate-500 font-medium">{clinicSettings.address}</p>
@@ -71,9 +74,9 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
         </div>
 
         {/* Pet & Owner Specs Table */}
-        <div className="grid grid-cols-2 gap-6 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200 avoid-break">
+        <div className="grid grid-cols-2 gap-6 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200 avoid-break print:bg-slate-50">
           <div>
-            <h3 className="text-xs font-bold uppercase text-blue-800 tracking-wider mb-2">
+            <h3 className="text-xs font-bold uppercase text-blue-900 tracking-wider mb-2">
               Datos del Paciente
             </h3>
             <div className="space-y-1 text-xs">
@@ -87,7 +90,7 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase text-blue-800 tracking-wider mb-2">
+            <h3 className="text-xs font-bold uppercase text-blue-900 tracking-wider mb-2">
               Datos del Propietario
             </h3>
             <div className="space-y-1 text-xs">
@@ -101,7 +104,7 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
 
         {/* Vaccine History Table */}
         <div className="mb-6 avoid-break">
-          <h3 className="text-xs font-bold uppercase text-blue-800 tracking-wider mb-3">
+          <h3 className="text-xs font-bold uppercase text-blue-900 tracking-wider mb-3">
             Carnet de Vacunación & Desparasitaciones
           </h3>
           <table className="w-full text-left text-xs border-collapse border border-slate-300">
@@ -126,7 +129,7 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
                   <tr key={v.id} className="border-b border-slate-200">
                     <td className="p-2 border-r border-slate-200 font-semibold">{v.vaccineName}</td>
                     <td className="p-2 border-r border-slate-200">{v.appliedDate}</td>
-                    <td className="p-2 border-r border-slate-200 font-bold text-blue-700">{v.nextDueDate}</td>
+                    <td className="p-2 border-r border-slate-200 font-bold text-blue-800">{v.nextDueDate}</td>
                     <td className="p-2 border-r border-slate-200">{v.batchNumber || '-'}</td>
                     <td className="p-2 font-bold">{v.status}</td>
                   </tr>
@@ -138,7 +141,7 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
 
         {/* Clinical History Table */}
         <div className="mb-8 avoid-break">
-          <h3 className="text-xs font-bold uppercase text-blue-800 tracking-wider mb-3">
+          <h3 className="text-xs font-bold uppercase text-blue-900 tracking-wider mb-3">
             Historial de Consultas Médicas
           </h3>
           <table className="w-full text-left text-xs border-collapse border border-slate-300">
@@ -167,7 +170,7 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
                     <td className="p-2 border-r border-slate-200">
                       {v.treatment}
                       {v.images && v.images.length > 0 && (
-                        <div className="flex gap-1.5 mt-2">
+                        <div className="flex gap-1.5 mt-2 no-print print:hidden">
                           {v.images.map((img, i) => (
                             <img key={i} src={img} alt="Evidencia" className="w-12 h-12 rounded object-cover border border-slate-300" />
                           ))}
@@ -183,13 +186,13 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
         </div>
 
         {/* Signature & Stamp Section */}
-        <div className="mt-12 pt-8 border-t border-slate-300 flex justify-between items-end avoid-break">
+        <div className="mt-12 pt-8 border-t border-slate-300 flex justify-between items-end avoid-break signature-block">
           <div className="text-[10px] text-slate-500">
-            <p className="font-bold">{clinicSettings.name}</p>
+            <p className="font-bold text-slate-900">{clinicSettings.name}</p>
             <p>{clinicSettings.subtitle}</p>
           </div>
 
-          <div className="text-center w-52 border-t border-slate-800 pt-1">
+          <div className="text-center w-56 border-t border-slate-800 pt-1">
             <p className="text-xs font-bold text-slate-900">{clinicSettings.vetDirector}</p>
             <p className="text-[10px] text-slate-500">Firma Médico Veterinario</p>
           </div>

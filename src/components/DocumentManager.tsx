@@ -62,7 +62,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
   return (
     <div className="space-y-6 animate-slide-up max-w-7xl mx-auto">
       {/* Main Document Manager UI (hidden when printing) */}
-      <div className="no-print space-y-6">
+      <div className="no-print print:hidden space-y-6">
         {/* Top Banner */}
         <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-500/30 overflow-hidden relative">
           <div className="absolute -right-12 -bottom-12 opacity-15 pointer-events-none">
@@ -145,7 +145,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between gap-2">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between gap-2 no-print print:hidden">
                   <button
                     onClick={() => setEditingDoc(doc)}
                     className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5"
@@ -170,13 +170,15 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
 
       {/* Editor Modal */}
       {editingDoc && (
-        <DocumentEditorModal
-          document={editingDoc}
-          pets={pets}
-          onClose={() => setEditingDoc(null)}
-          onSave={handleSaveDoc}
-          onReset={handleResetDoc}
-        />
+        <div className="no-print print:hidden">
+          <DocumentEditorModal
+            document={editingDoc}
+            pets={pets}
+            onClose={() => setEditingDoc(null)}
+            onSave={handleSaveDoc}
+            onReset={handleResetDoc}
+          />
+        </div>
       )}
 
       {/* Print View Modal */}
@@ -184,6 +186,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
         <DocumentPrintModal
           document={printingDoc}
           clinicSettings={clinicSettings}
+          pets={pets}
           onClose={() => setPrintingDoc(null)}
         />
       )}

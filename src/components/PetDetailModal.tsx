@@ -49,7 +49,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
   const petVaccines = vaccines.filter((v) => v.petId === pet.id);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div className="no-print print:hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
         onClick={onClose}

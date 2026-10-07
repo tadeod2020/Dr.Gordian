@@ -109,27 +109,63 @@
 /* Printable styling */
 @media print {
   @page {
-    size: portrait;
+    size: letter portrait;
     margin: 10mm 12mm;
   }
 
-  html, body {
+  /* Reset HTML, Body, Root containers to pure unstyled white canvas */
+  html,
+  body,
+  #root,
+  #root > div,
+  main {
     background: #ffffff !important;
     color: #000000 !important;
     height: auto !important;
+    min-height: 0 !important;
     overflow: visible !important;
     margin: 0 !important;
     padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Hide all web app navigation, headers, sidebars, buttons and search controls */
+  /* Disable all dark mode backgrounds and text color overrides during print */
+  .dark,
+  .dark body,
+  .dark main,
+  .dark div,
+  .dark p,
+  .dark span,
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark table,
+  .dark tr,
+  .dark td,
+  .dark th {
+    background-color: transparent !important;
+    background: transparent !important;
+    color: #000000 !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Universal Hide for all non-printable UI elements */
   .no-print,
+  .print\:hidden,
+  [data-no-print="true"],
   header,
   aside,
   nav,
-  button:not(.printable-button) {
+  footer,
+  button,
+  select,
+  input,
+  textarea {
     display: none !important;
   }
 
@@ -142,7 +178,8 @@
     position: static !important;
     inset: auto !important;
     z-index: auto !important;
-    background: transparent !important;
+    display: block !important;
+    background: #ffffff !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     overflow: visible !important;
@@ -156,6 +193,8 @@
 
   /* Format printable document sheets to cover standard paper page cleanly */
   .printable-sheet {
+    display: block !important;
+    position: static !important;
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
@@ -167,10 +206,27 @@
     border-radius: 0 !important;
   }
 
+  /* Typography & element colors inside printable document */
+  .printable-sheet h1,
+  .printable-sheet h2,
+  .printable-sheet h3 {
+    color: #1e3a8a !important; /* Professional Deep Navy Blue for titles */
+  }
+
+  .printable-sheet p,
+  .printable-sheet span,
+  .printable-sheet td,
+  .printable-sheet th,
+  .printable-sheet strong,
+  .printable-sheet div {
+    color: #0f172a !important;
+  }
+
   /* Avoid awkward page breaks in signature blocks, tables, and clauses */
   .avoid-break,
-  table,
-  tr,
+  .printable-sheet table,
+  .printable-sheet tr,
+  .printable-sheet .signature-block,
   .print-break-inside-avoid {
     page-break-inside: avoid !important;
     break-inside: avoid !important;

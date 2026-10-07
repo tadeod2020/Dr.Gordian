@@ -238,7 +238,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0f172a] text-[#0f172a] dark:text-[#f8fafc] flex">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0f172a] text-[#0f172a] dark:text-[#f8fafc] flex print:bg-white print:text-black print:block print:p-0 print:m-0">
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -255,7 +255,7 @@ export function App() {
       />
 
       {/* Main Content Workspace */}
-      <main className="flex-1 min-w-0 min-h-screen flex flex-col pt-16 lg:pt-0">
+      <main className="flex-1 min-w-0 min-h-screen flex flex-col pt-16 lg:pt-0 print:p-0 print:m-0 print:min-h-0 print:block">
         <Header
           searchTerm={searchTerm}
           setSearchTerm={(term) => {
@@ -278,13 +278,15 @@ export function App() {
         />
 
         {/* View Switcher */}
-        <div className="px-4 lg:px-8 pb-12 flex-1">
+        <div className="px-4 lg:px-8 pb-12 flex-1 print:p-0 print:m-0 print:block">
           {activeTab === 'inventory' ? (
-            <InventoryManager pets={pets} clinicSettings={currentClinicSettings} />
+            <div className="no-print print:hidden">
+              <InventoryManager pets={pets} clinicSettings={currentClinicSettings} />
+            </div>
           ) : activeTab === 'documents' ? (
             <DocumentManager pets={pets} clinicSettings={currentClinicSettings} />
           ) : activeTab === 'daily-visits' ? (
-            <div className="no-print">
+            <div className="no-print print:hidden">
               <DailyVisitsView
                 pets={pets}
                 visits={visits}
@@ -297,7 +299,7 @@ export function App() {
               />
             </div>
           ) : activeTab === 'dashboard' ? (
-            <div className="no-print">
+            <div className="no-print print:hidden">
               <Dashboard
                 pets={pets}
                 visits={visits}
@@ -317,7 +319,7 @@ export function App() {
               />
             </div>
           ) : (
-            <div className="no-print">
+            <div className="no-print print:hidden">
               <PetList
                 pets={pets}
                 speciesFilter={speciesFilter}

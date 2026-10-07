@@ -54,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* Mobile / Tablet Toggle Header */}
-      <div className="no-print lg:hidden fixed top-0 left-0 right-0 z-40 h-16 px-4 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="no-print print:hidden lg:hidden fixed top-0 left-0 right-0 z-40 h-16 px-4 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="flex items-center gap-2.5">
           <img src="/logo-transparent.png" alt="Dr. Gordian" className="h-9 w-auto object-contain dark:hidden" />
           <img src="/logo-transparent-white.png" alt="Dr. Gordian" className="h-9 w-auto object-contain hidden dark:block" />
@@ -72,13 +72,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
-          className="no-print lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 animate-fade-in"
+          className="no-print print:hidden lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 animate-fade-in"
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`no-print fixed lg:sticky top-0 left-0 z-50 h-screen w-72 p-5 flex flex-col justify-between bg-white dark:bg-slate-900 border-r border-slate-200/90 dark:border-slate-800 shadow-sm transition-transform duration-300 ease-out ${
+        className={`no-print print:hidden fixed lg:sticky top-0 left-0 z-50 h-screen w-72 p-5 flex flex-col justify-between bg-white dark:bg-slate-900 border-r border-slate-200/90 dark:border-slate-800 shadow-sm transition-transform duration-300 ease-out ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
