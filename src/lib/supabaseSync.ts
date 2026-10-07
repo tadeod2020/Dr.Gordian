@@ -3,7 +3,9 @@ import { db } from '../db/database';
 
 export async function syncLocalToSupabase() {
   try {
-    // 1. SYNC PETS (Push & Pull)
+    // ---------------------------------------------------------
+    // 1. SYNC PETS (Push Local -> Supabase, Pull Supabase -> Local)
+    // ---------------------------------------------------------
     const localPets = await db.pets.toArray();
     for (const pet of localPets) {
       const { data: existing } = await supabase
@@ -30,6 +32,22 @@ export async function syncLocalToSupabase() {
           notes: pet.notes || null,
           registered_at: pet.registeredAt
         });
+      } else if (existing[0]?.id) {
+        // Update remote pet details if it already exists
+        await supabase.from('pets').update({
+          species: pet.species,
+          breed: pet.breed,
+          gender: pet.gender,
+          age_years: pet.ageYears || 0,
+          age_months: pet.ageMonths || 0,
+          weight_kg: pet.weightKg ?? 0,
+          chip_number: pet.chipNumber || null,
+          avatar_url: pet.avatarUrl,
+          owner_phone: pet.ownerPhone,
+          owner_email: pet.ownerEmail || null,
+          owner_address: pet.ownerAddress || null,
+          notes: pet.notes || null
+        }).eq('id', existing[0].id);
       }
     }
 
@@ -38,7 +56,8 @@ export async function syncLocalToSupabase() {
     if (remotePets && remotePets.length > 0) {
       for (const rPet of remotePets) {
         const existsLocally = localPets.some(
-          (lp) => (lp.name || '').toLowerCase() === (rPet.name || '').toLowerCase() && (lp.ownerName || '').toLowerCase() === (rPet.owner_name || '').toLowerCase()
+          (lp) => (lp.name || '').toLowerCase().trim() === (rPet.name || '').toLowerCase().trim() &&
+                  (lp.ownerName || '').toLowerCase().trim() === (rPet.owner_name || '').toLowerCase().trim()
         );
         if (!existsLocally) {
           await db.pets.add({
@@ -64,9 +83,22 @@ export async function syncLocalToSupabase() {
       }
     }
 
+    // Map helper to resolve remote pet ID by name & owner
+    const allRemotePets = (await supabase.from('pets').select('id, name, owner_name')).data || [];
+    const updatedLocalPets = await db.pets.toArray();
+
+    // ---------------------------------------------------------
     // 2. SYNC VISITS / CONSULTAS (Push & Pull)
+    // ---------------------------------------------------------
     const localVisits = await db.visits.toArray();
     for (const v of localVisits) {
+      const parentLocalPet = updatedLocalPets.find(p => p.id === v.petId);
+      const remotePetMatch = parentLocalPet 
+        ? allRemotePets.find(rp => rp.name.toLowerCase().trim() === parentLocalPet.name.toLowerCase().trim() && rp.owner_name.toLowerCase().trim() === parentLocalPet.ownerName.toLowerCase().trim())
+        : null;
+
+      const remotePetId = remotePetMatch ? remotePetMatch.id : v.petId;
+
       const { data: existingV } = await supabase
         .from('visits')
         .select('id')
@@ -75,7 +107,7 @@ export async function syncLocalToSupabase() {
 
       if (!existingV || existingV.length === 0) {
         await supabase.from('visits').insert({
-          pet_id: v.petId,
+          pet_id: remotePetId,
           date: v.date,
           reason: v.reason,
           diagnosis: v.diagnosis,
@@ -92,14 +124,22 @@ export async function syncLocalToSupabase() {
     // Download remote visits from Supabase into local database
     const { data: remoteVisits } = await supabase.from('visits').select('*');
     if (remoteVisits && remoteVisits.length > 0) {
-      const updatedLocalVisits = await db.visits.toArray();
+      const currentLocalVisits = await db.visits.toArray();
       for (const rV of remoteVisits) {
-        const existsLocally = updatedLocalVisits.some(
+        // Find remote pet details to match local pet
+        const remotePet = allRemotePets.find(p => p.id === rV.pet_id);
+        const localPet = remotePet 
+          ? updatedLocalPets.find(lp => lp.name.toLowerCase().trim() === remotePet.name.toLowerCase().trim() && lp.ownerName.toLowerCase().trim() === remotePet.owner_name.toLowerCase().trim())
+          : updatedLocalPets[0];
+
+        const localPetId = localPet ? localPet.id : rV.pet_id;
+
+        const existsLocally = currentLocalVisits.some(
           (lv) => lv.date === rV.date && lv.reason === rV.reason && lv.cost === rV.cost
         );
-        if (!existsLocally) {
+        if (!existsLocally && localPetId) {
           await db.visits.add({
-            petId: rV.pet_id,
+            petId: localPetId,
             date: rV.date,
             reason: rV.reason,
             diagnosis: rV.diagnosis,
@@ -114,9 +154,18 @@ export async function syncLocalToSupabase() {
       }
     }
 
+    // ---------------------------------------------------------
     // 3. SYNC VACCINES (Push & Pull)
+    // ---------------------------------------------------------
     const localVaccines = await db.vaccines.toArray();
     for (const vac of localVaccines) {
+      const parentLocalPet = updatedLocalPets.find(p => p.id === vac.petId);
+      const remotePetMatch = parentLocalPet 
+        ? allRemotePets.find(rp => rp.name.toLowerCase().trim() === parentLocalPet.name.toLowerCase().trim() && rp.owner_name.toLowerCase().trim() === parentLocalPet.ownerName.toLowerCase().trim())
+        : null;
+
+      const remotePetId = remotePetMatch ? remotePetMatch.id : vac.petId;
+
       const { data: existingVac } = await supabase
         .from('vaccines')
         .select('id')
@@ -125,7 +174,7 @@ export async function syncLocalToSupabase() {
 
       if (!existingVac || existingVac.length === 0) {
         await supabase.from('vaccines').insert({
-          pet_id: vac.petId,
+          pet_id: remotePetId,
           vaccine_name: vac.vaccineName,
           applied_date: vac.appliedDate,
           next_due_date: vac.nextDueDate,
@@ -138,14 +187,21 @@ export async function syncLocalToSupabase() {
     // Download remote vaccines from Supabase into local database
     const { data: remoteVaccines } = await supabase.from('vaccines').select('*');
     if (remoteVaccines && remoteVaccines.length > 0) {
-      const updatedLocalVac = await db.vaccines.toArray();
+      const currentLocalVac = await db.vaccines.toArray();
       for (const rVac of remoteVaccines) {
-        const existsLocally = updatedLocalVac.some(
+        const remotePet = allRemotePets.find(p => p.id === rVac.pet_id);
+        const localPet = remotePet 
+          ? updatedLocalPets.find(lp => lp.name.toLowerCase().trim() === remotePet.name.toLowerCase().trim() && lp.ownerName.toLowerCase().trim() === remotePet.owner_name.toLowerCase().trim())
+          : updatedLocalPets[0];
+
+        const localPetId = localPet ? localPet.id : rVac.pet_id;
+
+        const existsLocally = currentLocalVac.some(
           (lvac) => lvac.vaccineName === rVac.vaccine_name && lvac.appliedDate === rVac.applied_date
         );
-        if (!existsLocally) {
+        if (!existsLocally && localPetId) {
           await db.vaccines.add({
-            petId: rVac.pet_id,
+            petId: localPetId,
             vaccineName: rVac.vaccine_name,
             appliedDate: rVac.applied_date,
             nextDueDate: rVac.next_due_date,
@@ -156,81 +212,86 @@ export async function syncLocalToSupabase() {
       }
     }
 
-    // 4. SYNC INVENTORY (Push & Pull)
-    const localInventory = await db.inventory.toArray();
-    for (const item of localInventory) {
-      const { data: existingInv } = await supabase
-        .from('inventory')
-        .select('id')
-        .eq('name', item.name)
-        .eq('category', item.category);
-
-      if (!existingInv || existingInv.length === 0) {
-        await supabase.from('inventory').insert({
-          name: item.name,
-          category: item.category,
-          barcode: item.barcode || null,
-          price: item.price,
-          cost: item.cost || 0,
-          stock: item.stock,
-          min_stock: item.minStock,
-          unit: item.unit,
-          supplier: item.supplier || null,
-          expiration_date: item.expirationDate || null,
-          notes: item.notes || null,
-          updated_at: item.updatedAt || new Date().toISOString()
-        });
-      } else {
-        await supabase
+    // ---------------------------------------------------------
+    // 4. SYNC INVENTORY (Safe Try-Catch)
+    // ---------------------------------------------------------
+    try {
+      const localInventory = await db.inventory.toArray();
+      for (const item of localInventory) {
+        const { data: existingInv } = await supabase
           .from('inventory')
-          .update({
+          .select('id')
+          .eq('name', item.name)
+          .eq('category', item.category);
+
+        if (!existingInv || existingInv.length === 0) {
+          await supabase.from('inventory').insert({
+            name: item.name,
+            category: item.category,
+            barcode: item.barcode || null,
             price: item.price,
             cost: item.cost || 0,
             stock: item.stock,
             min_stock: item.minStock,
-            barcode: item.barcode || null,
+            unit: item.unit,
             supplier: item.supplier || null,
             expiration_date: item.expirationDate || null,
             notes: item.notes || null,
             updated_at: item.updatedAt || new Date().toISOString()
-          })
-          .eq('id', existingInv[0].id);
-      }
-    }
-
-    // Download remote inventory from Supabase into local database
-    const { data: remoteInventory } = await supabase.from('inventory').select('*');
-    if (remoteInventory && remoteInventory.length > 0) {
-      const updatedLocalInv = await db.inventory.toArray();
-      for (const rItem of remoteInventory) {
-        const localMatch = updatedLocalInv.find(
-          (lItem) => (lItem.name || '').toLowerCase() === (rItem.name || '').toLowerCase() && lItem.category === rItem.category
-        );
-        if (!localMatch) {
-          await db.inventory.add({
-            name: rItem.name,
-            category: rItem.category,
-            barcode: rItem.barcode || undefined,
-            price: rItem.price,
-            cost: rItem.cost || undefined,
-            stock: rItem.stock,
-            minStock: rItem.min_stock,
-            unit: rItem.unit || 'Piezas',
-            supplier: rItem.supplier || undefined,
-            expirationDate: rItem.expiration_date || undefined,
-            notes: rItem.notes || undefined,
-            updatedAt: rItem.updated_at || new Date().toISOString()
           });
-        } else if (localMatch.id) {
-          await db.inventory.update(localMatch.id, {
-            stock: rItem.stock,
-            price: rItem.price,
-            cost: rItem.cost || undefined,
-            minStock: rItem.min_stock,
-            updatedAt: rItem.updated_at || new Date().toISOString()
-          });
+        } else {
+          await supabase
+            .from('inventory')
+            .update({
+              price: item.price,
+              cost: item.cost || 0,
+              stock: item.stock,
+              min_stock: item.minStock,
+              barcode: item.barcode || null,
+              supplier: item.supplier || null,
+              expiration_date: item.expirationDate || null,
+              notes: item.notes || null,
+              updated_at: item.updatedAt || new Date().toISOString()
+            })
+            .eq('id', existingInv[0].id);
         }
       }
+
+      const { data: remoteInventory } = await supabase.from('inventory').select('*');
+      if (remoteInventory && remoteInventory.length > 0) {
+        const updatedLocalInv = await db.inventory.toArray();
+        for (const rItem of remoteInventory) {
+          const localMatch = updatedLocalInv.find(
+            (lItem) => (lItem.name || '').toLowerCase() === (rItem.name || '').toLowerCase() && lItem.category === rItem.category
+          );
+          if (!localMatch) {
+            await db.inventory.add({
+              name: rItem.name,
+              category: rItem.category,
+              barcode: rItem.barcode || undefined,
+              price: rItem.price,
+              cost: rItem.cost || undefined,
+              stock: rItem.stock,
+              minStock: rItem.min_stock,
+              unit: rItem.unit || 'Piezas',
+              supplier: rItem.supplier || undefined,
+              expirationDate: rItem.expiration_date || undefined,
+              notes: rItem.notes || undefined,
+              updatedAt: rItem.updated_at || new Date().toISOString()
+            });
+          } else if (localMatch.id) {
+            await db.inventory.update(localMatch.id, {
+              stock: rItem.stock,
+              price: rItem.price,
+              cost: rItem.cost || undefined,
+              minStock: rItem.min_stock,
+              updatedAt: rItem.updated_at || new Date().toISOString()
+            });
+          }
+        }
+      }
+    } catch (invErr) {
+      console.warn('Inventory sync skipped or table missing:', invErr);
     }
 
     return { success: true };
@@ -242,12 +303,12 @@ export async function syncLocalToSupabase() {
 
 export async function clearAllInventoryRemoteAndLocal() {
   try {
-    // Clear IndexedDB local inventory
     await db.inventory.clear();
-
-    // Clear Supabase remote inventory
-    await supabase.from('inventory').delete().neq('id', 0);
-
+    try {
+      await supabase.from('inventory').delete().neq('id', 0);
+    } catch (err) {
+      console.warn('Remote inventory clear skipped:', err);
+    }
     return { success: true };
   } catch (err) {
     console.error('Error clearing inventory:', err);

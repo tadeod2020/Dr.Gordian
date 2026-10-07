@@ -42,10 +42,36 @@ export function App() {
   const [isPrintViewOpen, setIsPrintViewOpen] = useState(false);
   const [printPetTarget, setPrintPetTarget] = useState<Pet | null>(null);
 
-  // Initialize DB seed
+  // Initialize DB seed and Auto-Sync on startup & periodic 30s interval
   useEffect(() => {
-    seedDatabase().catch((err) => console.error('Error seeding DB:', err));
+    seedDatabase()
+      .then(async () => {
+        const { syncLocalToSupabase } = await import('./lib/supabaseSync');
+        await syncLocalToSupabase();
+      })
+      .catch((err) => console.error('Error seeding DB or initial sync:', err));
+
+    const syncInterval = setInterval(async () => {
+      try {
+        const { syncLocalToSupabase } = await import('./lib/supabaseSync');
+        await syncLocalToSupabase();
+      } catch (err) {
+        console.error('Periodic sync error:', err);
+      }
+    }, 30000);
+
+    return () => clearInterval(syncInterval);
   }, []);
+
+  // Helper for background sync trigger
+  const triggerAutoSync = async () => {
+    try {
+      const { syncLocalToSupabase } = await import('./lib/supabaseSync');
+      await syncLocalToSupabase();
+    } catch (err) {
+      console.error('Auto sync error:', err);
+    }
+  };
 
   // Dark Mode Sync
   useEffect(() => {
@@ -64,12 +90,12 @@ export function App() {
   const clinicSettingsList = useLiveQuery(() => db.clinicSettings.toArray(), []) || [];
 
   const currentCloudConfig: CloudConfig = cloudConfigs[0] || {
-    enabled: false,
+    enabled: true,
     provider: 'supabase',
-    apiUrl: '',
-    apiKey: '',
-    lastSyncedAt: null,
-    autoSync: false
+    apiUrl: 'https://zedkozfapgkloxofercm.supabase.co',
+    apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplZGtvemZhcGdrbG94b2ZlcmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzNDU3MzUsImV4cCI6MjEwMDkyMTczNX0.b_bz8t99nUUaM7x4hDkg3Z7W1QroYG0KU3tzKqI1SEo',
+    lastSyncedAt: new Date().toLocaleString(),
+    autoSync: true
   };
 
   const currentClinicSettings: ClinicSettings = clinicSettingsList[0] || {
@@ -97,6 +123,7 @@ export function App() {
   const handleLoginSuccess = (session: UserSession) => {
     setUserSession(session);
     setIsLocked(false);
+    triggerAutoSync();
   };
 
   const handleLogout = () => {
@@ -118,6 +145,7 @@ export function App() {
         registeredAt: new Date().toISOString()
       });
     }
+    triggerAutoSync();
   };
 
   const handleDeletePet = async (petId: number) => {
@@ -129,6 +157,7 @@ export function App() {
         setIsDetailModalOpen(false);
         setSelectedPet(null);
       }
+      triggerAutoSync();
     }
   };
 
@@ -137,6 +166,7 @@ export function App() {
     if (visitData.weightKg && visitData.petId) {
       await db.pets.update(visitData.petId, { weightKg: visitData.weightKg });
     }
+    triggerAutoSync();
   };
 
   const handleSavePetAndVisit = async (
@@ -151,10 +181,12 @@ export function App() {
       ...visitData,
       petId: Number(newPetId)
     });
+    triggerAutoSync();
   };
 
   const handleSaveVaccine = async (vaccineData: Omit<VaccineRecord, 'id'>) => {
     await db.vaccines.add(vaccineData);
+    triggerAutoSync();
   };
 
   const handleSaveCloudConfig = async (newConfig: CloudConfig) => {
