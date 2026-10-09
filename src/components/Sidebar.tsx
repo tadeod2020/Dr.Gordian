@@ -56,8 +56,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile / Tablet Toggle Header */}
       <div className="no-print print:hidden lg:hidden fixed top-0 left-0 right-0 z-40 h-16 px-4 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <img src="/logo-transparent.png" alt="Dr. Gordian" className="h-9 w-auto object-contain dark:hidden" />
-          <img src="/logo-transparent-white.png" alt="Dr. Gordian" className="h-9 w-auto object-contain hidden dark:block" />
+          <img src="./logo-transparent.png" alt="Dr. Gordian" className="h-9 w-auto object-contain dark:hidden" />
+          <img src="./logo-transparent-white.png" alt="Dr. Gordian" className="h-9 w-auto object-contain hidden dark:block" />
         </div>
 
         <button
@@ -90,8 +90,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             title={`Personalizar ajustes de ${clinicSettings.name}`}
           >
             <div className="py-1">
-              <img src="/logo-transparent.png" alt="Dr. Gordian" className="h-10 w-auto object-contain dark:hidden" />
-              <img src="/logo-transparent-white.png" alt="Dr. Gordian" className="h-10 w-auto object-contain hidden dark:block" />
+              <img src="./logo-transparent.png" alt="Dr. Gordian" className="h-10 w-auto object-contain dark:hidden" />
+              <img src="./logo-transparent-white.png" alt="Dr. Gordian" className="h-10 w-auto object-contain hidden dark:block" />
             </div>
           </div>
 

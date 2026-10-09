@@ -56,7 +56,7 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-blue-900 pb-2 mb-3">
           <div className="flex items-center gap-3">
-            <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-10 w-auto object-contain" />
+            <img src="./logo-transparent.png" alt="Dr. Gordian Logo" className="h-10 w-auto object-contain" />
             <div>
               <h1 className="text-base font-black text-blue-900 tracking-tight uppercase leading-none">
                 {clinicSettings.name}

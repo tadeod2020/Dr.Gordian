@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 .vercel
 .env*
+
+dist-offline
+Dr.Gordian_Offline
+Dr.Gordian_Offline.zip

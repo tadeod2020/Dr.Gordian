@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ClinicSettings } from '../types/veterinary';
 import { QrCode, Printer, Copy, Check, X, ShieldCheck, Download } from 'lucide-react';
+import QRCode from 'qrcode';
 
 interface PrivacyQRModalProps {
   clinicSettings: ClinicSettings;
@@ -9,13 +10,32 @@ interface PrivacyQRModalProps {
 
 export const PrivacyQRModal: React.FC<PrivacyQRModalProps> = ({ clinicSettings, onClose }) => {
   const [copied, setCopied] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
 
-  // Dynamic public URL (defaults to production URL or window origin)
-  const originUrl = typeof window !== 'undefined' ? window.location.origin : 'https://drgordian.vercel.app';
+  // Public URL: when running from a local file (offline copy) always point the QR to production
+  const originUrl =
+    typeof window !== 'undefined' && window.location.protocol.startsWith('http')
+      ? window.location.origin
+      : 'https://drgordian.vercel.app';
   const privacyUrl = `${originUrl}/?doc=privacy`;
 
-  // QR API Image URL
-  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(privacyUrl)}`;
+  // 100% Offline Base64 QR Data URL generation
+  useEffect(() => {
+    QRCode.toDataURL(privacyUrl, {
+      width: 600,
+      margin: 1,
+      color: {
+        dark: '#0f172a',
+        light: '#ffffff'
+      }
+    })
+      .then((url) => setQrDataUrl(url))
+      .catch((err) => {
+        console.error('Error generating offline QR:', err);
+        // Fallback API if QRCode generation fails
+        setQrDataUrl(`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(privacyUrl)}`);
+      });
+  }, [privacyUrl]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(privacyUrl);
@@ -23,19 +43,12 @@ export const PrivacyQRModal: React.FC<PrivacyQRModalProps> = ({ clinicSettings, 
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleDownloadQR = async () => {
-    try {
-      const response = await fetch(qrImageUrl);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = `QR_Aviso_Privacidad_${clinicSettings.name.replace(/\s+/g, '_')}.png`;
-      link.click();
-      URL.revokeObjectURL(blobUrl);
-    } catch {
-      window.open(qrImageUrl, '_blank');
-    }
+  const handleDownloadQR = () => {
+    if (!qrDataUrl) return;
+    const link = document.createElement('a');
+    link.href = qrDataUrl;
+    link.download = `QR_Aviso_Privacidad_${clinicSettings.name.replace(/\s+/g, '_')}.png`;
+    link.click();
   };
 
   const handlePrintSign = () => {
@@ -94,7 +107,7 @@ export const PrivacyQRModal: React.FC<PrivacyQRModalProps> = ({ clinicSettings, 
       <div className="printable-sheet max-w-2xl mx-auto bg-white text-slate-900 p-8 sm:p-12 border border-slate-200 rounded-2xl shadow-2xl print:border-none print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none text-center">
         {/* Clinic Header */}
         <div className="flex flex-col items-center border-b-2 border-blue-900 pb-4 mb-4">
-          <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-14 w-auto object-contain mb-2 print:h-12" />
+          <img src="./logo-transparent.png" alt="Dr. Gordian Logo" className="h-14 w-auto object-contain mb-2 print:h-12" />
           <h1 className="text-xl sm:text-2xl font-black text-blue-900 tracking-tight uppercase leading-tight">
             {clinicSettings.name}
           </h1>
@@ -122,11 +135,17 @@ export const PrivacyQRModal: React.FC<PrivacyQRModalProps> = ({ clinicSettings, 
 
         {/* QR Code Container */}
         <div className="my-4 p-5 bg-slate-50 border-2 border-dashed border-blue-300 rounded-3xl inline-block shadow-inner print:bg-white print:border-solid print:p-2">
-          <img
-            src={qrImageUrl}
-            alt="Código QR Aviso de Privacidad"
-            className="w-52 h-52 sm:w-60 sm:h-60 object-contain rounded-xl shadow-md border border-slate-300 print:w-56 print:h-56 print:shadow-none"
-          />
+          {qrDataUrl ? (
+            <img
+              src={qrDataUrl}
+              alt="Código QR Aviso de Privacidad"
+              className="w-52 h-52 sm:w-60 sm:h-60 object-contain rounded-xl shadow-md border border-slate-300 print:w-56 print:h-56 print:shadow-none"
+            />
+          ) : (
+            <div className="w-52 h-52 sm:w-60 sm:h-60 flex items-center justify-center bg-slate-100 text-xs font-bold text-slate-400">
+              Generando QR...
+            </div>
+          )}
         </div>
 
         {/* URL Text & Direct Link */}

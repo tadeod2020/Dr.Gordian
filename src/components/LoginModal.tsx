@@ -95,8 +95,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
         {/* Brand Header */}
         <div className="text-center space-y-3">
           <div className="flex justify-center py-2">
-            <img src="/logo-transparent.png" alt="Dr. Gordian" className="h-14 w-auto object-contain dark:hidden" />
-            <img src="/logo-transparent-white.png" alt="Dr. Gordian" className="h-14 w-auto object-contain hidden dark:block" />
+            <img src="./logo-transparent.png" alt="Dr. Gordian" className="h-14 w-auto object-contain dark:hidden" />
+            <img src="./logo-transparent-white.png" alt="Dr. Gordian" className="h-14 w-auto object-contain hidden dark:block" />
           </div>
           <p className="text-xs text-blue-600 dark:text-blue-400 font-bold">
             Acceso al Sistema Clínico Veterinario

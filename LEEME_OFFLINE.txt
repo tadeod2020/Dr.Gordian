@@ -1,0 +1,34 @@
+DR. GORDIAN - SISTEMA VETERINARIO (COPIA LOCAL / SIN INTERNET)
+==============================================================
+
+COMO ABRIRLO
+------------
+  Windows:      doble clic en  "iniciar_dr_gordian.bat"
+  Linux / Mac:  doble clic en  "iniciar_dr_gordian.sh"
+  Cualquiera:   abre el archivo  app/index.html  con Chrome, Edge o Firefox
+
+No necesita internet, ni instalar nada, ni servidor.
+Puedes copiar esta carpeta completa a una USB u otra computadora.
+
+QUE INCLUYE
+-----------
+  - Consultas del dia, pacientes, historial medico y vacunas
+  - Inventario con registro de bajas (tambien desde Consultas del Dia)
+  - Los 13 documentos legales, impresion forzada a 1 sola hoja
+  - Codigo QR del Aviso de Privacidad (se genera sin internet,
+    imprimible y descargable)
+  - Datos oficiales: Tel. 687-24-70 / WhatsApp 664 673 9950
+    Calle 3ra. Carrillo Puerto No. 7081 Z. Centro, frente a AutoZone,
+    Tijuana B.C.  -  Dr. Manuel Gordian Rueda
+
+IMPORTANTE SOBRE LOS DATOS
+--------------------------
+  - La informacion se guarda en el navegador de ESTA computadora.
+    Usa siempre el mismo navegador para ver tus registros.
+  - Cuando la computadora tenga internet, la app sincroniza
+    automaticamente con la nube (la misma de drgordian.vercel.app).
+  - Sin internet todo funciona igual; solo no sincroniza y las fotos
+    de ejemplo de mascotas se muestran como un icono de huella.
+  - Recomendado: haz respaldos desde Configuracion > Exportar respaldo.
+  - El QR impreso apunta a https://drgordian.vercel.app/?doc=privacy
+    (los clientes lo abren desde su celular con sus datos moviles).
