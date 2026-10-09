@@ -95,41 +95,41 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
         </div>
       </div>
 
-      {/* Printable Sheet - Strictly formatted for clean paper printing */}
-      <div className="printable-sheet max-w-4xl mx-auto bg-white text-slate-900 p-8 sm:p-12 border border-slate-200 rounded-xl shadow-2xl print:border-none print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none">
+      {/* Printable Sheet - Strictly formatted for clean 1-page paper printing */}
+      <div className="printable-sheet max-w-4xl mx-auto bg-white text-slate-900 p-6 sm:p-8 border border-slate-200 rounded-xl shadow-2xl print:border-none print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none">
         {/* Official Letterhead Header */}
-        <div className="flex items-center justify-between border-b-2 border-blue-900 pb-4 mb-6">
+        <div className="flex items-center justify-between border-b-2 border-blue-900 pb-2 mb-3">
           <div className="flex items-center gap-3">
-            <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-14 w-auto object-contain" />
+            <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-10 w-auto object-contain" />
             <div>
-              <h1 className="text-xl font-black text-blue-900 tracking-tight uppercase">
+              <h1 className="text-base font-black text-blue-900 tracking-tight uppercase leading-none">
                 {clinicSettings.name}
               </h1>
-              <p className="text-xs text-blue-700 font-bold mt-0.5">
+              <p className="text-[11px] text-blue-700 font-bold mt-0.5 leading-tight">
                 {clinicSettings.subtitle}
               </p>
-              <p className="text-[10px] text-slate-500 font-medium">
+              <p className="text-[9px] text-slate-500 font-medium leading-tight">
                 {clinicSettings.address} • Tel: {clinicSettings.phone}
               </p>
             </div>
           </div>
-          <div className="text-right text-xs text-slate-500">
+          <div className="text-right text-[10px] text-slate-500 leading-tight">
             <p className="font-bold text-slate-800">Fecha de Expedición</p>
             <p className="text-slate-600">{new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
         </div>
 
         {/* Document Title */}
-        <h2 className="text-base font-bold text-slate-900 text-center uppercase tracking-wide border-b border-slate-300 pb-2 mb-6">
+        <h2 className="text-xs sm:text-sm font-extrabold text-slate-900 text-center uppercase tracking-wide border-b border-slate-300 pb-1 mb-3">
           {doc.title}
         </h2>
 
         {/* Document Body Lines */}
-        <div className="space-y-2.5 text-xs leading-relaxed text-slate-800 text-justify">
+        <div className="space-y-1.5 text-[10.5px] leading-tight text-slate-800 text-justify">
           {lines.map((line, idx) => {
             const trimmed = line.trim();
             if (!trimmed) {
-              return <div key={idx} className="h-2" />;
+              return <div key={idx} className="h-1" />;
             }
 
             const isMainHeading = trimmed.toUpperCase() === trimmed && trimmed.length < 55 && !trimmed.includes('____');
@@ -137,14 +137,14 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
 
             if (isMainHeading) {
               return (
-                <h3 key={idx} className="text-xs font-extrabold text-blue-950 uppercase text-center mt-4 mb-2 tracking-wide border-b border-slate-200 pb-1">
+                <h3 key={idx} className="text-[11px] font-extrabold text-blue-950 uppercase text-center mt-2.5 mb-1 tracking-wide border-b border-slate-200 pb-0.5">
                   {trimmed}
                 </h3>
               );
             }
 
             return (
-              <p key={idx} className={isClauseHeader ? 'font-bold text-slate-900 mt-3' : 'text-slate-800'}>
+              <p key={idx} className={isClauseHeader ? 'font-bold text-slate-900 mt-2' : 'text-slate-800'}>
                 {trimmed}
               </p>
             );
@@ -152,17 +152,17 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
         </div>
 
         {/* Signature & Stamp Section */}
-        <div className="mt-14 pt-8 border-t border-slate-300 flex justify-between items-end text-center avoid-break print:page-break-inside-avoid signature-block">
-          <div className="w-5/12 border-t border-slate-900 pt-2 text-center">
-            <p className="text-xs font-bold text-slate-900">EL PROFESIONISTA / VETERINARIO</p>
-            <p className="text-[11px] text-slate-600 mt-0.5">{clinicSettings.vetDirector}</p>
-            <p className="text-[9px] text-slate-400 mt-1">Cédula y Firma Autorizada</p>
+        <div className="mt-5 pt-3 border-t border-slate-300 flex justify-between items-end text-center avoid-break print:page-break-inside-avoid signature-block">
+          <div className="w-5/12 border-t border-slate-900 pt-1.5 text-center">
+            <p className="text-[11px] font-bold text-slate-900">EL PROFESIONISTA / VETERINARIO</p>
+            <p className="text-[10px] text-slate-600 mt-0.5">{clinicSettings.vetDirector}</p>
+            <p className="text-[8px] text-slate-400 mt-0.5">Cédula y Firma Autorizada</p>
           </div>
 
-          <div className="w-5/12 border-t border-slate-900 pt-2 text-center">
-            <p className="text-xs font-bold text-slate-900">EL CLIENTE / PROPIETARIO</p>
-            <p className="text-[11px] text-slate-600 mt-0.5">Firma de Conformidad</p>
-            <p className="text-[9px] text-slate-400 mt-1">Nombre y Firma del Propietario</p>
+          <div className="w-5/12 border-t border-slate-900 pt-1.5 text-center">
+            <p className="text-[11px] font-bold text-slate-900">EL CLIENTE / PROPIETARIO</p>
+            <p className="text-[10px] text-slate-600 mt-0.5">Firma de Conformidad</p>
+            <p className="text-[8px] text-slate-400 mt-0.5">Nombre y Firma del Propietario</p>
           </div>
         </div>
       </div>

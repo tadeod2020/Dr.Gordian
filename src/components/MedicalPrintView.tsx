@@ -52,34 +52,34 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
       </div>
 
       {/* Printable Sheet */}
-      <div className="printable-sheet max-w-4xl mx-auto bg-white text-slate-900 p-8 border border-slate-300 rounded-lg shadow-sm print:border-none print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none">
+      <div className="printable-sheet max-w-4xl mx-auto bg-white text-slate-900 p-6 sm:p-8 border border-slate-300 rounded-lg shadow-sm print:border-none print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none">
         {/* Header */}
-        <div className="flex items-center justify-between border-b-2 border-blue-900 pb-4 mb-6">
-          <div className="flex items-center gap-4">
-            <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-14 w-auto object-contain" />
+        <div className="flex items-center justify-between border-b-2 border-blue-900 pb-2 mb-3">
+          <div className="flex items-center gap-3">
+            <img src="/logo-transparent.png" alt="Dr. Gordian Logo" className="h-10 w-auto object-contain" />
             <div>
-              <h1 className="text-xl font-black text-blue-900 tracking-tight uppercase">
+              <h1 className="text-base font-black text-blue-900 tracking-tight uppercase leading-none">
                 {clinicSettings.name}
               </h1>
-              <p className="text-xs text-blue-700 font-bold mt-0.5">
+              <p className="text-[11px] text-blue-700 font-bold mt-0.5 leading-tight">
                 {clinicSettings.subtitle} • Tel: {clinicSettings.phone}
               </p>
-              <p className="text-[11px] text-slate-500 font-medium">{clinicSettings.address}</p>
+              <p className="text-[9px] text-slate-500 font-medium leading-tight">{clinicSettings.address}</p>
             </div>
           </div>
-          <div className="text-right text-xs text-slate-500">
+          <div className="text-right text-[10px] text-slate-500 leading-tight">
             <p className="font-bold text-slate-800">Fecha de Expedición</p>
             <p>{new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
         </div>
 
         {/* Pet & Owner Specs Table */}
-        <div className="grid grid-cols-2 gap-6 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200 avoid-break print:bg-slate-50">
+        <div className="grid grid-cols-2 gap-4 mb-3 bg-slate-50 p-2.5 rounded-lg border border-slate-200 avoid-break print:bg-slate-50">
           <div>
-            <h3 className="text-xs font-bold uppercase text-blue-900 tracking-wider mb-2">
+            <h3 className="text-[10px] font-bold uppercase text-blue-900 tracking-wider mb-1">
               Datos del Paciente
             </h3>
-            <div className="space-y-1 text-xs">
+            <div className="space-y-0.5 text-[10px] leading-tight">
               <p><strong className="text-slate-700">Nombre:</strong> {pet.name}</p>
               <p><strong className="text-slate-700">Especie:</strong> {pet.species} ({pet.breed})</p>
               <p><strong className="text-slate-700">Género:</strong> {pet.gender}</p>
@@ -90,10 +90,10 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase text-blue-900 tracking-wider mb-2">
+            <h3 className="text-[10px] font-bold uppercase text-blue-900 tracking-wider mb-1">
               Datos del Propietario
             </h3>
-            <div className="space-y-1 text-xs">
+            <div className="space-y-0.5 text-[10px] leading-tight">
               <p><strong className="text-slate-700">Nombre:</strong> {pet.ownerName}</p>
               <p><strong className="text-slate-700">Teléfono:</strong> {pet.ownerPhone}</p>
               <p><strong className="text-slate-700">Correo:</strong> {pet.ownerEmail || 'N/A'}</p>
@@ -103,35 +103,35 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
         </div>
 
         {/* Vaccine History Table */}
-        <div className="mb-6 avoid-break">
-          <h3 className="text-xs font-bold uppercase text-blue-900 tracking-wider mb-3">
+        <div className="mb-3 avoid-break">
+          <h3 className="text-[10px] font-bold uppercase text-blue-900 tracking-wider mb-1.5">
             Carnet de Vacunación & Desparasitaciones
           </h3>
-          <table className="w-full text-left text-xs border-collapse border border-slate-300">
+          <table className="w-full text-left text-[10px] leading-tight border-collapse border border-slate-300">
             <thead>
               <tr className="bg-slate-100 border-b border-slate-300 text-slate-700 font-bold">
-                <th className="p-2 border-r border-slate-300">Vacuna / Tratamiento</th>
-                <th className="p-2 border-r border-slate-300">Fecha Aplicación</th>
-                <th className="p-2 border-r border-slate-300">Próximo Refuerzo</th>
-                <th className="p-2 border-r border-slate-300">Lote</th>
-                <th className="p-2">Estado</th>
+                <th className="p-1 px-1.5 border-r border-slate-300">Vacuna / Tratamiento</th>
+                <th className="p-1 px-1.5 border-r border-slate-300">Fecha Aplicación</th>
+                <th className="p-1 px-1.5 border-r border-slate-300">Próximo Refuerzo</th>
+                <th className="p-1 px-1.5 border-r border-slate-300">Lote</th>
+                <th className="p-1 px-1.5">Estado</th>
               </tr>
             </thead>
             <tbody>
               {petVaccines.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-3 text-center text-slate-500 italic">
+                  <td colSpan={5} className="p-1.5 text-center text-slate-500 italic">
                     Sin vacunas registradas
                   </td>
                 </tr>
               ) : (
                 petVaccines.map((v) => (
                   <tr key={v.id} className="border-b border-slate-200">
-                    <td className="p-2 border-r border-slate-200 font-semibold">{v.vaccineName}</td>
-                    <td className="p-2 border-r border-slate-200">{v.appliedDate}</td>
-                    <td className="p-2 border-r border-slate-200 font-bold text-blue-800">{v.nextDueDate}</td>
-                    <td className="p-2 border-r border-slate-200">{v.batchNumber || '-'}</td>
-                    <td className="p-2 font-bold">{v.status}</td>
+                    <td className="p-1 px-1.5 border-r border-slate-200 font-semibold">{v.vaccineName}</td>
+                    <td className="p-1 px-1.5 border-r border-slate-200">{v.appliedDate}</td>
+                    <td className="p-1 px-1.5 border-r border-slate-200 font-bold text-blue-800">{v.nextDueDate}</td>
+                    <td className="p-1 px-1.5 border-r border-slate-200">{v.batchNumber || '-'}</td>
+                    <td className="p-1 px-1.5 font-bold">{v.status}</td>
                   </tr>
                 ))
               )}
@@ -140,44 +140,44 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
         </div>
 
         {/* Clinical History Table */}
-        <div className="mb-8 avoid-break">
-          <h3 className="text-xs font-bold uppercase text-blue-900 tracking-wider mb-3">
+        <div className="mb-4 avoid-break">
+          <h3 className="text-[10px] font-bold uppercase text-blue-900 tracking-wider mb-1.5">
             Historial de Consultas Médicas
           </h3>
-          <table className="w-full text-left text-xs border-collapse border border-slate-300">
+          <table className="w-full text-left text-[10px] leading-tight border-collapse border border-slate-300">
             <thead>
               <tr className="bg-slate-100 border-b border-slate-300 text-slate-700 font-bold">
-                <th className="p-2 border-r border-slate-300">Fecha</th>
-                <th className="p-2 border-r border-slate-300">Motivo</th>
-                <th className="p-2 border-r border-slate-300">Diagnóstico</th>
-                <th className="p-2 border-r border-slate-300">Tratamiento</th>
-                <th className="p-2">Veterinario</th>
+                <th className="p-1 px-1.5 border-r border-slate-300">Fecha</th>
+                <th className="p-1 px-1.5 border-r border-slate-300">Motivo</th>
+                <th className="p-1 px-1.5 border-r border-slate-300">Diagnóstico</th>
+                <th className="p-1 px-1.5 border-r border-slate-300">Tratamiento</th>
+                <th className="p-1 px-1.5">Veterinario</th>
               </tr>
             </thead>
             <tbody>
               {petVisits.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-3 text-center text-slate-500 italic">
+                  <td colSpan={5} className="p-1.5 text-center text-slate-500 italic">
                     Sin consultas registradas
                   </td>
                 </tr>
               ) : (
                 petVisits.map((v) => (
                   <tr key={v.id} className="border-b border-slate-200">
-                    <td className="p-2 border-r border-slate-200">{v.date}</td>
-                    <td className="p-2 border-r border-slate-200 font-semibold">{v.reason}</td>
-                    <td className="p-2 border-r border-slate-200">{v.diagnosis}</td>
-                    <td className="p-2 border-r border-slate-200">
+                    <td className="p-1 px-1.5 border-r border-slate-200">{v.date}</td>
+                    <td className="p-1 px-1.5 border-r border-slate-200 font-semibold">{v.reason}</td>
+                    <td className="p-1 px-1.5 border-r border-slate-200">{v.diagnosis}</td>
+                    <td className="p-1 px-1.5 border-r border-slate-200">
                       {v.treatment}
                       {v.images && v.images.length > 0 && (
-                        <div className="flex gap-1.5 mt-2 no-print print:hidden">
+                        <div className="flex gap-1.5 mt-1 no-print print:hidden">
                           {v.images.map((img, i) => (
-                            <img key={i} src={img} alt="Evidencia" className="w-12 h-12 rounded object-cover border border-slate-300" />
+                            <img key={i} src={img} alt="Evidencia" className="w-10 h-10 rounded object-cover border border-slate-300" />
                           ))}
                         </div>
                       )}
                     </td>
-                    <td className="p-2">{v.vetName}</td>
+                    <td className="p-1 px-1.5">{v.vetName}</td>
                   </tr>
                 ))
               )}
@@ -186,15 +186,15 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
         </div>
 
         {/* Signature & Stamp Section */}
-        <div className="mt-12 pt-8 border-t border-slate-300 flex justify-between items-end avoid-break signature-block">
-          <div className="text-[10px] text-slate-500">
+        <div className="mt-4 pt-3 border-t border-slate-300 flex justify-between items-end avoid-break signature-block">
+          <div className="text-[9px] text-slate-500 leading-tight">
             <p className="font-bold text-slate-900">{clinicSettings.name}</p>
             <p>{clinicSettings.subtitle}</p>
           </div>
 
-          <div className="text-center w-56 border-t border-slate-800 pt-1">
-            <p className="text-xs font-bold text-slate-900">{clinicSettings.vetDirector}</p>
-            <p className="text-[10px] text-slate-500">Firma Médico Veterinario</p>
+          <div className="text-center w-52 border-t border-slate-800 pt-1">
+            <p className="text-[11px] font-bold text-slate-900">{clinicSettings.vetDirector}</p>
+            <p className="text-[9px] text-slate-500">Firma Médico Veterinario</p>
           </div>
         </div>
       </div>
