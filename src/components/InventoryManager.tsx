@@ -27,7 +27,8 @@ import {
   Barcode, 
   Calendar,
   Layers3,
-  RefreshCw
+  RefreshCw,
+  MinusCircle
 } from 'lucide-react';
 
 interface InventoryManagerProps {
@@ -200,6 +201,18 @@ export const InventoryManager: React.FC<InventoryManagerProps> = () => {
             >
               <Trash2 className="w-4 h-4" />
               <span>Vaciar Inventario</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setDeductTargetItem(null);
+                setIsDeductModalOpen(true);
+              }}
+              className="px-4 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-rose-600/30 border border-rose-400/40"
+              title="Registrar baja o descuento de inventario"
+            >
+              <MinusCircle className="w-4 h-4 stroke-[2.5]" />
+              <span>Registrar Baja de Inventario</span>
             </button>
 
             <ShimmerButton

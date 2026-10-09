@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Pet, VisitRecord } from '../types/veterinary';
-import { AVATAR_PRESETS } from '../db/database';
+import { db, AVATAR_PRESETS } from '../db/database';
 import { MagicCard } from './magicui/MagicCard';
 import { NumberTicker } from './magicui/NumberTicker';
 import { ShimmerButton } from './magicui/ShimmerButton';
@@ -19,9 +19,11 @@ import {
   UserPlus,
   CheckCircle2,
   Sparkles,
-  Eye
+  Eye,
+  MinusCircle
 } from 'lucide-react';
 import { CameraModal } from './CameraModal';
+import { InventoryDeductModal } from './InventoryDeductModal';
 
 interface DailyVisitsViewProps {
   pets?: Pet[];
@@ -46,6 +48,26 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isNewVisitModalOpen, setIsNewVisitModalOpen] = useState(false);
+  const [isInventoryDeductOpen, setIsInventoryDeductOpen] = useState(false);
+
+  // Handle inventory deduction from daily visits
+  const handleConfirmDeductInventory = async (itemId: number, quantity: number) => {
+    const item = await db.inventory.get(itemId);
+    if (!item) return;
+
+    const newStock = Math.max(0, item.stock - quantity);
+    await db.inventory.update(itemId, {
+      stock: newStock,
+      updatedAt: new Date().toISOString()
+    });
+
+    try {
+      const { syncLocalToSupabase } = await import('../lib/supabaseSync');
+      await syncLocalToSupabase();
+    } catch (e) {
+      console.warn('Sync error on inventory deduct:', e);
+    }
+  };
 
   // Form State inside Modal
   const [patientMode, setPatientMode] = useState<'existing' | 'new'>('existing');
@@ -263,6 +285,15 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
                 </button>
               )}
             </div>
+
+            <button
+              onClick={() => setIsInventoryDeductOpen(true)}
+              className="px-4 py-2.5 rounded-2xl bg-rose-600/90 hover:bg-rose-600 text-white font-bold text-xs flex items-center gap-2 transition-all border border-rose-400/40 shadow-lg shadow-rose-900/30"
+              title="Registrar baja o descuento de insumos/medicamentos del inventario"
+            >
+              <MinusCircle className="w-4 h-4 stroke-[2.5]" />
+              <span>Registrar Baja de Inventario</span>
+            </button>
 
             <ShimmerButton
               onClick={handleOpenModal}
@@ -886,6 +917,14 @@ export const DailyVisitsView: React.FC<DailyVisitsViewProps> = ({
           />
         </div>
       )}
+
+      {/* Inventory Deduct Modal */}
+      <InventoryDeductModal
+        item={null}
+        isOpen={isInventoryDeductOpen}
+        onClose={() => setIsInventoryDeductOpen(false)}
+        onConfirmDeduct={handleConfirmDeductInventory}
+      />
     </div>
   );
 };
