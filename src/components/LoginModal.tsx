@@ -30,7 +30,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
   // Default user session
   const DEFAULT_USER: UserSession = {
     id: 'usr-001',
-    name: 'Dr. Gordian',
+    name: 'Dr. Manuel Gordian Rueda',
     email: DOCTOR_EMAIL,
     role: 'Administrador',
     avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=150&q=80'
@@ -46,7 +46,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess }) => {
       if (email.trim().toLowerCase() === DOCTOR_EMAIL.toLowerCase() && password === DOCTOR_PASSWORD) {
         onLoginSuccess({
           id: 'usr-active',
-          name: 'Dr. Gordian',
+          name: 'Dr. Manuel Gordian Rueda',
           email: DOCTOR_EMAIL,
           role: 'Administrador',
           avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=150&q=80'

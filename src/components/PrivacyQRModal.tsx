@@ -77,7 +77,7 @@ export const PrivacyQRModal: React.FC<PrivacyQRModalProps> = ({ clinicSettings, 
             {clinicSettings.subtitle}
           </p>
           <p className="text-[11px] text-slate-500 mt-0.5">
-            {clinicSettings.address} • Tel: {clinicSettings.phone}
+            {clinicSettings.address} • Tel: {clinicSettings.phone}{clinicSettings.whatsapp ? ` • WA: ${clinicSettings.whatsapp}` : ''}
           </p>
         </div>
 

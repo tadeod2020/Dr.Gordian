@@ -48,16 +48,25 @@ export const AVATAR_PRESETS = {
 
 // Seed initial configuration if DB is empty and clear old sample data
 export async function seedDatabase() {
+  const defaultSettings: ClinicSettings = {
+    name: 'Dr. Gordian',
+    subtitle: 'Clínica Veterinaria & Registro Perros/Gatos',
+    phone: '687-24-70',
+    whatsapp: '664 673 9950',
+    email: 'contacto@drgordian.com',
+    address: 'Calle 3ra. Carrillo Puerto No. 7081 Z. Centro frente a AutoZone Tijuana B.C.',
+    vetDirector: 'Dr. Manuel Gordian Rueda'
+  };
+
   const clinicCount = await db.clinicSettings.count();
   if (clinicCount === 0) {
-    await db.clinicSettings.add({
-      name: 'Dr. Gordian',
-      subtitle: 'Clínica Veterinaria & Registro Perros/Gatos',
-      phone: '+52 55 1234 5678',
-      email: 'contacto@drgordian.com',
-      address: 'Av. Principal 100, Ciudad',
-      vetDirector: 'Dr. Gordian'
-    });
+    await db.clinicSettings.add(defaultSettings);
+  } else {
+    // Force update existing settings to ensure new contact details apply
+    const firstSetting = (await db.clinicSettings.toArray())[0];
+    if (firstSetting && (firstSetting.phone === '+52 55 1234 5678' || firstSetting.vetDirector === 'Dr. Gordian' || !firstSetting.whatsapp)) {
+      await db.clinicSettings.update(firstSetting.id!, defaultSettings);
+    }
   }
 
   const cloudCount = await db.cloudConfig.count();

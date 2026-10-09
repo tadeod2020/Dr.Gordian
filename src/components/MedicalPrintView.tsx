@@ -62,7 +62,7 @@ export const MedicalPrintView: React.FC<MedicalPrintViewProps> = ({
                 {clinicSettings.name}
               </h1>
               <p className="text-[11px] text-blue-700 font-bold mt-0.5 leading-tight">
-                {clinicSettings.subtitle} • Tel: {clinicSettings.phone}
+                {clinicSettings.subtitle} • Tel: {clinicSettings.phone}{clinicSettings.whatsapp ? ` • WA: ${clinicSettings.whatsapp}` : ''}
               </p>
               <p className="text-[9px] text-slate-500 font-medium leading-tight">{clinicSettings.address}</p>
             </div>

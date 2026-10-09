@@ -152,8 +152,14 @@ export const PrivacyPublicView: React.FC<PrivacyPublicViewProps> = ({ clinicSett
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-1.5">
               <Phone className="w-4 h-4 text-blue-400" />
-              <span>{clinicSettings.phone}</span>
+              <span>Tel: {clinicSettings.phone}</span>
             </div>
+            {clinicSettings.whatsapp && (
+              <div className="flex items-center gap-1.5">
+                <Phone className="w-4 h-4 text-emerald-400" />
+                <span>WA: {clinicSettings.whatsapp}</span>
+              </div>
+            )}
             <div className="flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-blue-400" />
               <span>{clinicSettings.address}</span>

@@ -111,10 +111,11 @@ export function App() {
   const currentClinicSettings: ClinicSettings = clinicSettingsList[0] || {
     name: 'Dr. Gordian',
     subtitle: 'Clínica Veterinaria & Registro Perros/Gatos',
-    phone: '+52 55 1234 5678',
+    phone: '687-24-70',
+    whatsapp: '664 673 9950',
     email: 'contacto@drgordian.com',
-    address: 'Av. Principal 100, Ciudad',
-    vetDirector: 'Dr. Gordian'
+    address: 'Calle 3ra. Carrillo Puerto No. 7081 Z. Centro frente a AutoZone Tijuana B.C.',
+    vetDirector: 'Dr. Manuel Gordian Rueda'
   };
 
   // Dynamic Document Title

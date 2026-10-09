@@ -15,7 +15,6 @@ import {
   Sparkles,
   Building2,
   Phone,
-  Mail,
   MapPin,
   UserCheck
 } from 'lucide-react';
@@ -47,11 +46,12 @@ export const CloudSyncSettings: React.FC<CloudSyncSettingsProps> = ({
 
   // Clinic Personalization State
   const [clinicName, setClinicName] = useState(clinicSettings.name || 'Dr. Gordian');
-  const [subtitle, setSubtitle] = useState(clinicSettings.subtitle || 'Clínica Veterinaria');
-  const [phone, setPhone] = useState(clinicSettings.phone || '+52 55 1234 5678');
-  const [email, setEmail] = useState(clinicSettings.email || 'contacto@veterinaria.com');
-  const [address, setAddress] = useState(clinicSettings.address || 'Av. Principal 100');
-  const [vetDirector, setVetDirector] = useState(clinicSettings.vetDirector || 'Dr. Gordian');
+  const [subtitle, setSubtitle] = useState(clinicSettings.subtitle || 'Clínica Veterinaria & Registro Perros/Gatos');
+  const [phone, setPhone] = useState(clinicSettings.phone || '687-24-70');
+  const [whatsapp, setWhatsapp] = useState(clinicSettings.whatsapp || '664 673 9950');
+  const [email, setEmail] = useState(clinicSettings.email || 'contacto@drgordian.com');
+  const [address, setAddress] = useState(clinicSettings.address || 'Calle 3ra. Carrillo Puerto No. 7081 Z. Centro frente a AutoZone Tijuana B.C.');
+  const [vetDirector, setVetDirector] = useState(clinicSettings.vetDirector || 'Dr. Manuel Gordian Rueda');
 
   // Cloud Config State
   const [provider, setProvider] = useState<'supabase' | 'custom_api'>(config.provider);
@@ -69,6 +69,7 @@ export const CloudSyncSettings: React.FC<CloudSyncSettingsProps> = ({
       setClinicName(clinicSettings.name);
       setSubtitle(clinicSettings.subtitle);
       setPhone(clinicSettings.phone);
+      setWhatsapp(clinicSettings.whatsapp || '664 673 9950');
       setEmail(clinicSettings.email);
       setAddress(clinicSettings.address);
       setVetDirector(clinicSettings.vetDirector);
@@ -103,6 +104,7 @@ export const CloudSyncSettings: React.FC<CloudSyncSettingsProps> = ({
       name: clinicName || 'Dr. Gordian',
       subtitle: subtitle || 'Clínica Veterinaria',
       phone,
+      whatsapp,
       email,
       address,
       vetDirector
@@ -254,7 +256,7 @@ export const CloudSyncSettings: React.FC<CloudSyncSettingsProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Teléfono de la Clínica
+                    Teléfono Fijo
                   </label>
                   <div className="relative">
                     <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -262,7 +264,7 @@ export const CloudSyncSettings: React.FC<CloudSyncSettingsProps> = ({
                       type="text"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+52 55 1234 5678"
+                      placeholder="687-24-70"
                       className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-blue-600 focus:outline-none text-xs font-medium text-slate-900 dark:text-white"
                     />
                   </div>
@@ -270,15 +272,15 @@ export const CloudSyncSettings: React.FC<CloudSyncSettingsProps> = ({
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Correo Electrónico
+                    Número de WhatsApp
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-500" />
                     <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="contacto@veterinaria.com"
+                      type="text"
+                      value={whatsapp}
+                      onChange={(e) => setWhatsapp(e.target.value)}
+                      placeholder="664 673 9950"
                       className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-blue-600 focus:outline-none text-xs font-medium text-slate-900 dark:text-white"
                     />
                   </div>

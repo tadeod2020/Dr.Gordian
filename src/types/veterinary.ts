@@ -59,6 +59,7 @@ export interface ClinicSettings {
   name: string;
   subtitle: string;
   phone: string;
+  whatsapp?: string;
   email: string;
   address: string;
   vetDirector: string;

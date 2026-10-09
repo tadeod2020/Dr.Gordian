@@ -109,7 +109,7 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
                 {clinicSettings.subtitle}
               </p>
               <p className="text-[9px] text-slate-500 font-medium leading-tight">
-                {clinicSettings.address} • Tel: {clinicSettings.phone}
+                {clinicSettings.address} • Tel: {clinicSettings.phone}{clinicSettings.whatsapp ? ` • WA: ${clinicSettings.whatsapp}` : ''}
               </p>
             </div>
           </div>
