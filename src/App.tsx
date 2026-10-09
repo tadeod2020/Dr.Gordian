@@ -16,12 +16,22 @@ import { LoginModal } from './components/LoginModal';
 import { DailyVisitsView } from './components/DailyVisitsView';
 import { DocumentManager } from './components/DocumentManager';
 import { InventoryManager } from './components/InventoryManager';
+import { PrivacyPublicView } from './components/PrivacyPublicView';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'pets' | 'daily-visits' | 'documents' | 'inventory'>('daily-visits');
   const [speciesFilter, setSpeciesFilter] = useState<'all' | 'Perro' | 'Gato'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+
+  // Privacy Public View state (triggered by ?doc=privacy or #privacidad URL)
+  const [isPrivacyPublicView, setIsPrivacyPublicView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      return searchParams.get('doc') === 'privacy' || window.location.hash.includes('privacidad');
+    }
+    return false;
+  });
 
   // Authentication & Session state (Always starts null on page reload)
   const [userSession, setUserSession] = useState<UserSession | null>(null);
@@ -263,6 +273,16 @@ export function App() {
       lastSyncedAt: new Date().toLocaleString()
     });
   };
+
+  // Public Privacy View accessible directly via QR Code scan
+  if (isPrivacyPublicView) {
+    return (
+      <PrivacyPublicView
+        clinicSettings={currentClinicSettings}
+        onBackToApp={() => setIsPrivacyPublicView(false)}
+      />
+    );
+  }
 
   // If user is not logged in or screen is locked, present Apple Login Modal
   if (!userSession || isLocked) {

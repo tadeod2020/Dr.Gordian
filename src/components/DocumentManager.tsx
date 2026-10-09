@@ -5,8 +5,9 @@ import { INITIAL_LEGAL_DOCUMENTS } from '../data/legalDocuments';
 import type { LegalDocumentTemplate, DocumentCategory, Pet, ClinicSettings } from '../types/veterinary';
 import { DocumentEditorModal } from './DocumentEditorModal';
 import { DocumentPrintModal } from './DocumentPrintModal';
+import { PrivacyQRModal } from './PrivacyQRModal';
 import { MagicCard } from './magicui/MagicCard';
-import { FileText, Search, Edit3, Printer, CheckCircle, Sparkles } from 'lucide-react';
+import { FileText, Search, Edit3, Printer, CheckCircle, Sparkles, QrCode } from 'lucide-react';
 
 interface DocumentManagerProps {
   pets: Pet[];
@@ -18,6 +19,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
   const [selectedCategory, setSelectedCategory] = useState<DocumentCategory | 'Todos'>('Todos');
   const [editingDoc, setEditingDoc] = useState<LegalDocumentTemplate | null>(null);
   const [printingDoc, setPrintingDoc] = useState<LegalDocumentTemplate | null>(null);
+  const [isPrivacyQROpen, setIsPrivacyQROpen] = useState(false);
 
   // Load customized documents from Dexie IndexedDB
   const customDocsList = useLiveQuery(() => db.customDocuments.toArray(), []) || [];
@@ -64,7 +66,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
       {/* Main Document Manager UI (hidden when printing) */}
       <div className="no-print print:hidden space-y-6">
         {/* Top Banner */}
-        <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-500/30 overflow-hidden relative">
+        <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-500/30 overflow-hidden relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="absolute -right-12 -bottom-12 opacity-15 pointer-events-none">
             <FileText className="w-80 h-80 text-white" />
           </div>
@@ -77,8 +79,18 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
               Documentos & Contratos Legales
             </h1>
             <p className="text-sm text-blue-100 font-medium leading-relaxed">
-              Accede a las 13 plantillas oficiales de la clínica. Puedes modificarlas en tiempo real, autocompletar datos de tus pacientes e imprimirlos o guardarlos como PDF directamente.
+              Accede a las plantillas oficiales de la clínica. Puedes modificarlas en tiempo real, autocompletar datos de tus pacientes e imprimirlos o guardarlos como PDF directamente.
             </p>
+          </div>
+
+          <div className="relative z-10 w-full sm:w-auto">
+            <button
+              onClick={() => setIsPrivacyQROpen(true)}
+              className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white hover:bg-slate-100 text-blue-900 text-xs font-extrabold shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-2 border border-white/50 group"
+            >
+              <QrCode className="w-4 h-4 text-blue-700 group-hover:scale-110 transition-transform" />
+              Generar QR Aviso de Privacidad
+            </button>
           </div>
         </div>
 
@@ -188,6 +200,14 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({ pets, clinicSe
           clinicSettings={clinicSettings}
           pets={pets}
           onClose={() => setPrintingDoc(null)}
+        />
+      )}
+
+      {/* Privacy Notice QR Modal */}
+      {isPrivacyQROpen && (
+        <PrivacyQRModal
+          clinicSettings={clinicSettings}
+          onClose={() => setIsPrivacyQROpen(false)}
         />
       )}
     </div>
